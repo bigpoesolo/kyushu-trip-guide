@@ -1,7 +1,7 @@
 // Bump this version when shipping changes to the files in the offline cache.
-const cacheName = 'fukuoka-trip-v5';
+const cacheName = 'fukuoka-trip-v6';
 const shell = [
-  './', './index.html', './style.css?v=5', './app.js?v=5', './trip.js?v=5', './guides.js?v=5',
+  './', './style.css?v=5', './app.js?v=5', './trip.js?v=5', './guides.js?v=5',
   './manifest.webmanifest', './icon-192.png', './icon-512.png', './yufuin-winter.webp',
   './photo-yufuin-station.webp', './photo-yunotsubo.webp', './photo-airport.webp', './photo-hakata.webp', './photo-kushida.webp',
   './photo-mameshiba.webp', './photo-street-snacks.webp', './photo-night-snacks.webp',
@@ -25,7 +25,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).catch(() => caches.match('./index.html', { cacheName })));
+    event.respondWith(fetch(event.request).catch(() => caches.match('./', { cacheName })));
   } else if (shell.some(path => new URL(path, self.registration.scope).href === event.request.url)) {
     event.respondWith(caches.match(event.request, { cacheName }).then(cached => cached || fetch(event.request)));
   }
