@@ -10,10 +10,12 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=10">
-  <script type="module" src="./app.js?v=10"></script>
+  <link rel="stylesheet" href="./style.css?v=17">
+  <script type="module" src="./app.js?v=17"></script>
 </head>
 <body>
+<a class="skip-link" href="#view">일정 본문으로 이동</a>
+<noscript><p class="no-script">여행표를 보려면 브라우저의 JavaScript를 켜 주세요.</p></noscript>
 <svg class="icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
   <symbol id="mountain" viewBox="0 0 24 24"><path d="m2.7 19 6.8-10.5 3.5 5.3 3.1-4 5.2 9.2zM7.6 11.4l1.9 1.2 1.5-.8"/><circle cx="17.6" cy="5.1" r="2"/></symbol>
   <symbol id="calendar" viewBox="0 0 24 24"><rect x="4" y="5.8" width="16" height="14.2" rx="2.6"/><path d="M8 4v4m8-4v4M4 10.5h16m-11 4.8h2m2 0h2"/></symbol>
@@ -40,6 +42,8 @@
   <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.3"/><path d="M12 7.7v4.7l3.1 1.6"/></symbol>
   <symbol id="external" viewBox="0 0 24 24"><path d="M8 16 16 8M9 8h7v7"/></symbol>
   <symbol id="edit" viewBox="0 0 24 24"><path d="m5 19 4.4-.9 9.2-9.2a2.6 2.6 0 0 0-3.7-3.7l-9.2 9.2zM13.7 6.5l3.8 3.8"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="m7 3 3 5-2 2c1.5 3 3 4.5 6 6l2-2 5 3-1 4C10 22 2 14 3 4z"/></symbol>
+  <symbol id="share" viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M5 12v8h14v-8"/></symbol>
 </svg>
 
   <div class="shell">
@@ -52,7 +56,7 @@
         <button data-tab="mail" type="button"><svg aria-hidden="true"><use href="#mail"/></svg><span>예약·메일</span></button>
         <button data-tab="tasks" type="button"><svg aria-hidden="true"><use href="#checklist"/></svg><span>할 일</span><span id="task-count" class="count"></span></button>
       </nav>
-      <span class="edition">DEC 2026 <i> / </i> VOL. 01</span>
+      <button type="button" class="header-share" data-action="share" aria-label="현재 여행 화면 링크 공유"><svg aria-hidden="true"><use href="#share"/></svg><span>공유</span></button>
     </header>
     <header class="hero">
       <img class="cover-image" src="./yufuin-winter.webp" alt="" width="1536" height="1024" fetchpriority="high">
@@ -60,12 +64,13 @@
         <p class="hero-kicker"><span></span> 5–7 DEC 2026 <span class="hero-kicker-divider"></span> 2박 3일</p>
         <h1>후쿠오카<span>·</span>유후인</h1>
         <p class="hero-subtitle">Fukuoka &amp; Yufuin</p>
-        <div class="hero-bottom"><span class="hero-badge">일정 초안</span><span>일본 현지시간 JST</span></div>
+        <div class="hero-bottom"><span class="hero-badge">둘이 떠나는 겨울 여행</span><span>12.05 SAT — 12.07 MON</span></div>
       </div>
       <div class="cover-caption" aria-hidden="true"><span>01 / WINTER IN KYUSHU</span><em>Yufuin, Ōita</em></div>
     </header>
-    <main id="view"></main>
-    <footer><span class="footer-brand">KYUSHU FIELD NOTES</span><span>수정 내용은 이 기기에 저장됩니다.</span><span id="offline-state" role="status"></span></footer>
+    <div id="connection-banner" class="connection-banner" role="status" hidden></div>
+    <main id="view" tabindex="-1"></main>
+    <footer><span class="footer-brand">KYUSHU FIELD NOTES</span><button type="button" class="text-button" data-action="app-help">설치·개인 저장 안내</button><span id="offline-state" role="status"></span></footer>
   </div>
   <dialog id="detail" aria-labelledby="detail-title">
     <div class="dialog-head"><span><svg aria-hidden="true"><use href="#mountain"/></svg> KYUSHU FIELD NOTES</span><form method="dialog"><button class="close" aria-label="닫기"><svg aria-hidden="true"><use href="#close"/></svg></button></form></div>

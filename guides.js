@@ -5,6 +5,7 @@ const photo = (file, caption, author, original, license, licensePath) => ({
 });
 
 export const photos = {
+  market: { file: 'photo-christmas-market.webp', caption: '하카타 행사 공식 소개 사진 · 촬영 시기와 실제 모습은 다를 수 있어요', author: 'Christmas Advent', source: 'https://christmas-advent.jp/fukuoka-hakata/' },
   'food-sofuren': { file: 'photo-food-sofuren.webp', caption: '소후렌 하카타 에키마에점 외관 · 공식 사진', author: '소후렌', source: 'https://www.sofuren.com/stores/hakata-ekimae' },
   'food-daichi': { file: 'photo-food-daichi.jpg', caption: '다이치 우동 하카타역 지하점 내부 · 공식 사진', author: '다이치 우동', source: 'https://daichinoudon.pro/?p=15' },
   'food-mako': { file: 'photo-food-mako.jpg', caption: '마코 야키토리 코스 예시 · TableCheck 매장 제공 사진', author: '야키토리 마코', source: 'https://www.tablecheck.com/ja/yakitori-mako' },
@@ -37,7 +38,8 @@ const photoGroups = {
   night: ['late-snack'],
   yufuin: ['ryokan', 'sukiyaki', 'bath', 'early'],
   kushida: ['shrine', 'lunch', 'canal'],
-  hakata: ['bus-back', 'hakata-bags', 'brunch', 'market-before', 'market', 'breakfast', 'mako-transit', 'mako-return'],
+  hakata: ['bus-back', 'hakata-bags', 'brunch', 'breakfast'],
+  market: ['market-before', 'market', 'mako-transit', 'mako-return'],
   forza: ['hakata-hotel', 'rest', 'checkout', 'snack'],
   'food-mako': ['mako-ready', 'dinner'],
   'food-sofuren': ['night-food'],
@@ -97,7 +99,7 @@ export const guides = {
   lunch: {
     origin: kushida, mode: 'walking',
     directions: '일요일 점심은 우동집 선택 중입니다. 마켓 중심 일정에는 포르자와 같은 하카타구치 쪽 다이치 우동이 편하고, 신사 쪽에서 먹고 싶으면 카로노우론을 비교해요. 우동 점심 → 구시다 신사·캐널시티 선택 방문 → 14:30 포르자 휴식 순서입니다. 타이라와 하가쿠레는 일요일 휴무라 이날 후보에서 제외했습니다.',
-    hints: { daichi: '하카타역·포르자 근처 · 큰 우엉튀김 우동', genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때', kamakiri: '우동 유지 · 다이묘로 넘어갈 때', umeyama: '생선 정식 · 텐진 남쪽으로 동선 변경', wakaba: '돈카츠 · 니시나카스·텐진 쪽', kubocurry: '카레 · 점심만 · 다이묘로 동선 변경', gyozalee: '큰 교자·중식 · 야쿠인으로 동선 변경' },
+    hints: { karo: '구시다 신사·캐널시티 사이 · 부드러운 우동', daichi: '하카타역·포르자 근처 · 큰 우엉튀김 우동', genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때', kamakiri: '우동 유지 · 다이묘로 넘어갈 때', umeyama: '생선 정식 · 텐진 남쪽으로 동선 변경', wakaba: '돈카츠 · 니시나카스·텐진 쪽', kubocurry: '카레 · 점심만 · 다이묘로 동선 변경', gyozalee: '큰 교자·중식 · 야쿠인으로 동선 변경' },
     related: ['canal'],
   },
   canal: { origin: kushida, mode: 'walking', directions: '캐널시티는 짧게 둘러보고 14:15쯤 포르자로 출발해요. 14:30 체크인·휴식과 15:45 마켓 관람을 우선하는 선택 일정입니다.', related: ['hakata-hotel'] },
