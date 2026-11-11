@@ -47,11 +47,11 @@ export const schedules = [
     { id: 'hakata-bags', start: '10:10', end: '10:35', title: '포르자에 짐 맡기기', subtitle: '하카타구치 도보 약 3분 · 체크인 전 보관 가능', status: 'plan', place: forza, area: 'hakata', links: [forzaOfficial], fallback: ['호텔에 맡기기 어려울 때', '하카타역 코인 로커를 확인하고, 만석이면 KITTE 하카타 마루이 2층 TABINAKA를 이용해요.'] },
     { id: 'brunch', start: '10:45', end: '11:25', title: '브런치', subtitle: '하카타역 근처에서 빵을 가볍게', status: 'plan', area: 'hakata', candidates: ['dacomecca', 'shiroya', 'fullfull'], meal: 'brunch', fallback: ['다코메카 줄이 길 때', '대기가 15분을 넘길 것 같으면 역 안 시로야에서 포장하거나, 구시다 신사 쪽으로 계속 걸어 더 풀풀 하카타에서 빵을 삽니다.'] },
     { id: 'shrine', start: '11:30', end: '12:15', title: '구시다 신사 · 가와바타', subtitle: '신사를 먼저 보고 상점가 산책은 점심 뒤로', status: 'plan', place: '櫛田神社 福岡', area: 'kushida' },
-    { id: 'lunch', start: '12:15', end: '13:15', title: '점심', subtitle: '13시 전에 카로노우론 도착 목표', status: 'plan', area: 'kushida', candidates: ['karo', 'genki', 'hirao', 'uochu', 'issou'], meal: 'lunch', fallback: ['카로노우론 대기·품절 시', '고후쿠마치 쪽 하카타 겐키잇파이의 줄이 더 짧으면 이동합니다. 이미 텐진 쪽으로 넘어갔다면 히라오 다이묘점도 후보예요.'] },
+    { id: 'lunch', start: '12:15', end: '13:15', title: '점심', subtitle: '13시 전에 카로노우론 도착 목표', status: 'plan', area: 'kushida', candidates: ['karo', 'genki', 'hirao', 'uochu', 'issou', 'umeyama', 'wakaba', 'kubocurry', 'kamakiri', 'gyozalee'], meal: 'lunch', fallback: ['카로노우론 대기·품절 시', '고후쿠마치 쪽 하카타 겐키잇파이의 줄이 더 짧으면 이동합니다. 이미 텐진 쪽으로 넘어갔다면 히라오·가마키리 우동·와카바를 비교해요. 우메야마·교자 리·쿠보카레는 점심 동선을 텐진·야쿠인 쪽으로 바꿀 때 고릅니다.'] },
     { id: 'canal', start: '13:15', end: '15:00', title: '가와바타 · 캐널시티 쇼핑', subtitle: '점심 뒤 도보로 둘러보고 하카타역 쪽으로', status: 'option', place: 'キャナルシティ博多', area: 'kushida', links: [['캐널시티 공식', 'https://canalcity.co.jp/']] },
     { id: 'hakata-hotel', start: '15:15', end: '16:45', title: '포르자 하카타구치 체크인 · 휴식', subtitle: '아고다 예약 확정 · 리프레시 더블 금연 · 2인', status: 'confirmed', booking: true, place: forza, area: 'hakata', links: [forzaOfficial, ['아고다 내 예약', 'https://www.agoda.com/account/bookings.html']], detail: '12/6~12/7 성인 2명·1박 예약이 확정됐어요. 체크인은 14:00부터, 체크아웃은 다음 날 11:00까지입니다. 실제 방문은 기존 일정대로 15:15를 목표로 해요. 예약 확정서와 결제·취소 조건은 아래 예약 정보와 관련 메일에서 확인하세요.' },
     { id: 'snack', start: '16:45', end: '17:30', title: '간식', subtitle: '나카스 쪽 저녁 동선에 맞을 때만', status: 'option', area: 'tenjin', candidates: ['painstock', '16ku', 'suzukake'], meal: 'snack' },
-    { id: 'dinner', start: '18:00', end: '19:15', title: '저녁', subtitle: '요시즈카 2인 예약 가능 · 좌석 미확정', status: 'todo', area: 'kushida', candidates: ['yoshizuka', 'hountei', 'yamamichi', 'issou', 'yamanaka', 'genki'], meal: 'dinner', fallback: ['요시즈카 자리가 없거나 줄이 길 때', '같은 나카스 2초메의 호운테이 나카스 본점 자리를 확인합니다. 장어가 우선이면 야쿠인오도리의 야마미치 본점에 먼저 자리를 확인하고 이동하세요.'] },
+    { id: 'dinner', start: '18:00', end: '19:15', title: '저녁', subtitle: '요시즈카 2인 예약 가능 · 좌석 미확정', status: 'todo', area: 'kushida', candidates: ['yoshizuka', 'hountei', 'yamamichi', 'issou', 'yamanaka', 'genki', 'toriden', 'hamadaya', 'ichifuji', 'umeyama', 'wakaba', 'gyozalee', 'taka', 'kamakiri'], meal: 'dinner', fallback: ['요시즈카 자리가 없거나 줄이 길 때', '같은 나카스의 호운테이, 하카타구치의 이치후지, 캐널시티 옆 하마다야를 비교해요. 토리덴과 야키토리 타카는 미리 예약을 확인할 별도 저녁 후보입니다. 전골·코스를 고르면 식사 소요 시간을 확인하고 뒤의 크리스마스마켓을 늦춰요.'] },
     { id: 'market', start: '19:30', end: '20:30', title: '하카타역 크리스마스마켓 · 야경', subtitle: '저녁 뒤 역 광장 · 12/6 12:00~23:00 운영', status: 'option', place: '博多駅前広場', area: 'hakata', links: [['하카타역 행사 공식', 'https://christmas-advent.jp/fukuoka-hakata/']] },
     { id: 'rest', start: '20:30', timeLabel: '20:30 이후', title: '포르자 복귀 · 휴식', status: 'plan', place: forza, area: 'hakata' },
   ],
@@ -93,6 +93,7 @@ const udon = ['우동 WEST 2024', `${awards}udon_west/2024`];
 const ramen = ['라멘 WEST 2025', `${awards}ramen_west/2025`];
 const unagi = ['장어 2026', `${awards}unagi/2026`];
 const checked = '2026.11.10';
+const foodChecked = '2026.11.11';
 
 export const foods = {
   dacomecca: { name: '다코메카 · DACOMECCA', jp: 'DACOMECCA 福岡市博多区博多駅前4-14-1', area: 'hakata', menu: '조리빵 · 크루아상', hours: '07:00~19:00 · 부정기 휴무', photo: 'hakata-bread', info: '하카타역 하카타구치 쪽 브런치 1순위. 일요일은 정기 휴무일이 아니며 임시 휴무·품절 공지는 당일 확인해요.', meals: ['brunch', 'snack'], award: bread, tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40057205/', official: 'https://peaceput.com/shop/', checked },
@@ -116,5 +117,89 @@ export const foods = {
   milch: { name: '유후인 밀히 본점', jp: '由布院ミルヒ本店 大分県由布市湯布院町川上3015-1', area: 'yufuin', menu: '갓 구운 케제쿠헨 치즈케이크', hours: '10:30~17:30', photo: 'snacks', info: '유후인 우유로 만든 작은 치즈케이크예요. 한 가지 고른다면 따뜻한 케제쿠헨을 추천해요. 카페 입장과 짐 회수에 여유가 있을 때 들릅니다.', official: 'https://www.milch-japan.co.jp/shops/', checked },
   korokke: { name: '금상 고로케 2호점', jp: '金賞コロッケ 2号店 大分県由布市湯布院町川上1079-8', area: 'yufuin', menu: '갓 튀긴 금상 고로케', hours: '09:00 개점 · 겨울 마감 확인', photo: 'snacks', info: '달지 않은 간식을 원할 때. 2호점은 유노츠보 거리변에 있어요. 주문 후 튀겨주는 가게라 줄이 길면 지나가고, 영업시간은 당일 확인하세요.', official: 'https://yunotubo.com/map/', checked },
   purindora: { name: '하나코지 키쿠야', jp: '御菓子司 花麹菊家 大分県由布市湯布院町川上1524-1', area: 'yufuin', menu: '푸딩을 넣은 도라야키 · 푸린도라', hours: '10:00~17:00', photo: 'snacks', info: '유노츠보 요코초 입구의 과자점이에요. 푸린도라를 포장하고, 밤에 먹을 거라면 제품의 냉장·섭취 안내를 확인하세요.', official: 'https://www.yufuin.org/', checked },
+  taka: {
+    name: '야키토리 타카', jp: '焼き鳥 貴 福岡市中央区高砂2-13-7 ミカミビル1F', area: 'tenjin', menu: '오마카세 닭꼬치 · 숯불구이', meals: ['dinner'],
+    hours: '일 18:00~23:00 · 부정기 휴무 · 재료 소진 시 종료', rating: 3.73, reviewCount: 285, added: true, checked: foodChecked,
+    budget: '후기 기준 1인 ¥10,000~14,999 전후 · 서비스료 5% 별도',
+    info: '이번 추가 후보 중 점수가 가장 높은 예약형 야키토리. 12석 규모라 현장 대기 대안보다 미리 자리를 확인할 특별식 후보예요. 일요일 정기 휴무는 아니지만 12/6 영업·잔여석은 별도 확인합니다.',
+    reviewNote: '일본어 재방문 후기에서 숯 향·타레·야채의 익힘과 응대를 좋게 평가했어요. 2026년 후기에는 순서대로 나오는 오마카세 구이의 만족도가 보입니다. 평가가 높아도 예약과 이동 부담은 있어요.',
+    route: '야쿠인보다 남쪽인 다카사고. 하카타·나카스 기본 동선에서 벗어나므로 이곳을 고르면 저녁 목적지 자체를 바꾸고 식사 시간을 넉넉히 잡아요.',
+    award: ['야키토리 WEST 2026', `${awards}yakitori_west/2026/`], tabelog: 'https://tabelog.com/fukuoka/A4001/A400104/40033935/', official: 'https://yakitori-taka-fukuoka.studio.site/',
+  },
+  kamakiri: {
+    name: '가마키리 우동', jp: '釜喜利うどん 福岡市中央区大名1-7-8', area: 'tenjin', menu: '고보텐 우동 · 스다치 우동', meals: ['lunch', 'dinner'],
+    hours: '일 11:30~21:00 · 주문 마감 20:30 · 화·수 휴무', rating: 3.70, reviewCount: 1263, added: true, checked: foodChecked,
+    budget: '1인 ¥1,000~1,999', info: '일요일에 못 가는 하가쿠레를 대신할 우동 후보예요. 예약 불가·대기가 생기는 인기점이며 점심부터 저녁까지 중간 휴식 없이 운영합니다. 줄이 짧다고 보장할 수 있는 대안은 아니에요.',
+    reviewNote: '1,200명 이상이 후기를 남겼고, 일본어 후기에서 면과 다시의 균형을 좋게 평가해요. 공식 등록 정보도 자가제면과 가쓰오·다시마 육수를 소개합니다.',
+    route: '다이묘·아카사카를 둘러볼 때 적합해요. 구시다 신사 옆 대기줄에서 즉시 갈아타기에는 거리가 있어 텐진으로 넘어가기로 했을 때 고릅니다.',
+    award: udon, tabelog: 'https://tabelog.com/fukuoka/A4001/A400104/40034851/',
+  },
+  umeyama: {
+    name: '우메야마 텟페이 식당 본점', jp: '梅山鉄平食堂 本店 福岡市中央区渡辺通3-6-1', area: 'tenjin', menu: '생선 조림·구이·튀김 정식', meals: ['lunch', 'dinner'],
+    hours: '일 11:30~21:00 · 주문 마감 20:30 · 수 휴무', rating: 3.69, reviewCount: 948, added: true, checked: foodChecked,
+    budget: '1인 ¥1,000~1,999 중심 · 생선에 따라 추가', info: '라멘·장어 대신 평소 먹는 생선 정식을 원할 때 우선 추천. 제철 생선 조림·구이·튀김 중 당일 메뉴를 보고 골라요. 예약은 받지 않으며 중간 휴식 없이 영업합니다.',
+    reviewNote: '2026년 10월 일본어 후기에서 생선 조림과 밥의 조합을 호평했고, 재방문 후기도 확인됩니다. 일요일 개점 전 대기와 음식 제공이 느리다는 후기도 있어 회전이 빠른 가게로 보지는 않아요.',
+    route: '와타나베도리역 근처라 텐진 남쪽·야쿠인 일정과 묶어요. 구시다·캐널시티 기본 점심 동선을 유지한다면 우선순위는 낮춥니다.',
+    award: ['식당 2026', `${awards}shokudo/2026/`], tabelog: 'https://tabelog.com/fukuoka/A4001/A400103/40018886/', official: 'https://umeyamateppei.com/',
+  },
+  toriden: {
+    name: '토리덴 하카타 본점', jp: 'とり田 博多本店 福岡市博多区下川端町10-5', area: 'kushida', menu: '미즈타키 · 닭 육수 전골 · 마무리 죽', photo: 'food-toriden', meals: ['lunch', 'dinner'],
+    hours: '일 11:30~23:00 · 주문 마감 22:00 · 부정기 휴무', rating: 3.67, reviewCount: 982, added: true, checked: foodChecked,
+    budget: '후기·게재 예산: 점심 ¥5,000~5,999 / 저녁 ¥8,000~9,999', info: '아직 후보에 없던 하카타 대표 음식 미즈타키를 먹을 곳. 토리덴 탄탄멘 가게와 다른 물닭전골 본점입니다. 예약 가능하며 전골 식사 시간을 확인한 뒤 뒤의 일정을 여유 있게 잡아요.',
+    reviewNote: '2026년 일본어 후기에서 진한 닭 육수, 마지막 죽, 직원이 전골을 설명하고 조리해 주는 서비스를 좋게 평가했어요. 일부 후기는 가격 대비 만족도와 2층 분위기에 호불호가 있습니다.',
+    route: '가와바타 상점가 북쪽·하카타자 뒤편. 구시다 신사와 같은 권역이지만 점심 1시간 안에 전골을 서두르기보다 예약한 저녁으로 넣기 좋아요.',
+    tabelog: 'https://tabelog.com/fukuoka/A4001/A400102/40037654/', official: 'https://toriden.com/',
+  },
+  wakaba: {
+    name: '돈카츠 와카바 텐진 본점', jp: 'とんかつ わか葉 天神本店 福岡市中央区天神1-15-36', area: 'tenjin', menu: '흰 튀김옷의 히레·로스 돈카츠 정식', photo: 'food-wakaba', meals: ['lunch', 'dinner'],
+    hours: '일 10:30~ / 저녁 17:00~ · 마감 안내 차이 확인', rating: 3.66, reviewCount: 887, added: true, checked: foodChecked,
+    budget: '타베로그 게재 예산 1인 ¥1,000~1,999', info: '저온 조리로 얇고 흰 튀김옷과 분홍빛 고기가 특징인 돈카츠집. 원하는 익힘이 있으면 주문 전 문의해요. 타베로그와 공식 사이트의 마감 안내가 달라 점심 14:30·저녁 19:45보다 일찍 방문하고 당일 마감을 확인합니다.',
+    reviewNote: '일본어 후기에서 부드러운 히레와 얇은 튀김옷을 높게 평가해요. 주문 후 조리에 약 15~20분 걸렸다는 후기가 있어 대기가 없더라도 식사 시간을 남겨둡니다. 지쿠시구치 지점의 점수·수상과 구분했어요.',
+    route: '텐진 북동쪽·아크로스와 니시나카스 근처. 다이묘까지 가지 않고 텐진·나카스 산책과 묶을 수 있어요.',
+    award: ['돈카츠 2026', `${awards}tonkatsu/2026/`], tabelog: 'https://tabelog.com/fukuoka/A4001/A400103/40050758/', official: 'https://foryou-group.co.jp/brandfc/fukuoka/entry-83.html',
+  },
+  gyozalee: {
+    name: '교자 리 · 餃子李', jp: '餃子李 福岡市中央区薬院3-1-11 福海ビル1F', area: 'tenjin', menu: '큰 군만두·물만두 · 볶음밥·중식', photo: 'food-gyozalee', meals: ['lunch', 'dinner'],
+    hours: '일 11:30~14:30 / 17:00~23:00 · 저녁 주문 마감 21:50 · 화 휴무', rating: 3.66, reviewCount: 1748, added: true, checked: foodChecked,
+    budget: '점심 ¥1,000~1,999 / 저녁 후기 기준 ¥3,000~3,999', info: '호운테이의 작은 하카타 교자와 다른, 큼직한 만두와 중식을 나눠 먹는 후보예요. 공식 사이트 기준 화요일 휴무. 타베로그에 예약은 4인 이상, 현금 결제로 기재되어 있어 두 분은 현장 대기·현금 준비를 기준으로 봅니다.',
+    reviewNote: '1,700명 이상이 후기를 남긴 오래된 중식점. 일본어 후기에서 군만두·물만두·볶음밥 조합이 자주 등장해요. 양이 큰 만두를 둘이 나눠 먹는 식사로 골랐습니다.',
+    route: '야쿠인역 근처라 16구·야마미치 쪽으로 동선을 바꿀 때 좋아요. 나카스에서 걸어서 바로 옮기는 짧은 대안은 아니에요.',
+    award: ['중국요리 WEST 2026', `${awards}chinese_west/2026/`], tabelog: 'https://tabelog.com/fukuoka/A4001/A400104/40000194/', official: 'https://gyouza-lee.com/',
+  },
+  ichifuji: {
+    name: '모츠나베 이치후지 하카타점', jp: 'もつ鍋 一藤 博多店 福岡市博多区博多駅前2-4-16', area: 'hakata', menu: '미소 모츠나베 · 짬뽕면 마무리', meals: ['dinner'],
+    hours: '일 17:00~23:00 · 주문 마감 22:30', rating: 3.56, reviewCount: 667, added: true, checked: foodChecked,
+    budget: '식사 코스 ¥4,000부터 · 주문·음료에 따라 추가 · 오토시 ¥495 안내', info: '야마나카 아카사카점까지 가지 않고 포르자와 같은 하카타구치 권역에서 모츠나베를 먹는 대안. 예약 가능하며 2인 개인실 요청은 전화로 받습니다. 이 가게의 12/6 자리 확보 여부는 아직 확인하지 않았어요.',
+    reviewNote: '2026년 일본어 후기에서 미소 육수와 곱창 식감을 좋게 평가했어요. 개점 후 곧 만석이었다는 후기도 있어 큰 가게라도 예약 확인이 먼저입니다. 매우 높은 점수만으로 뽑은 곳이 아니라 동선과 후기 규모를 함께 본 후보예요.',
+    route: '포르자 체크인 후 하카타역 서쪽에서 저녁을 먹고 역 광장 크리스마스마켓으로 이어가기 편한 선택입니다.',
+    tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40040770/', official: 'https://www.ichifuji-f.jp/hakata/',
+  },
+  kubocurry: {
+    name: '쿠보카레 다이묘점', jp: 'クボカリー 大名店 福岡市中央区大名1-4-23 ロワールマンション大名101', area: 'tenjin', menu: '스파이스 카레 플레이트 · 치킨 비리야니', meals: ['lunch'],
+    hours: '일 11:00~15:30 안내 · 휴무는 공식 Instagram 확인', rating: 3.56, reviewCount: 442, added: true, checked: foodChecked,
+    budget: '1인 ¥1,000~1,999 · 후기 플레이트·비리야니 ¥1,500 전후', info: '일본식 면·전골 대신 스파이스 카레를 먹고 싶을 때. 점심 예약 불가, 13석 규모라 줄이 생길 수 있어요. 현행 점심 영업을 기준으로 넣었으며 과거 저녁 영업 후기를 근거로 저녁 후보에 넣지 않았습니다.',
+    reviewNote: '타베로그 일본어 후기에서 비리야니와 카레 플레이트를 호평하고, Retty에는 여러 차례 방문한 후기와 식권 주문 방식이 확인돼요. 지역 음식 매체 UMAGA도 후쿠오카 스파이스 카레의 대표점으로 소개합니다.',
+    route: '다이묘·아카사카 쇼핑을 점심부터 할 때 선택해요. 캐널시티 점심 동선에서 즉시 이동하는 대안보다는 텐진 중심으로 계획을 바꿀 때 적합합니다.',
+    tabelog: 'https://tabelog.com/fukuoka/A4001/A400104/40050019/', official: 'https://www.instagram.com/kubocurry_daimyo/', evidenceLinks: [['일본어 재방문 후기', 'https://retty.me/area/PRE40/ARE122/SUB12301/100001444750/'], ['지역 음식 매체 UMAGA', 'https://umaga.net/store/47035/']],
+  },
+  hamadaya: {
+    name: '미즈타키 하마다야 본점', jp: '博多水たき濱田屋 本店 福岡市博多区住吉1-1-9 RJRプレシア博多201', area: 'kushida', menu: '닭 육수 미즈타키 · 면 또는 죽', photo: 'food-hamadaya', meals: ['dinner'],
+    hours: '일 11:30~15:00 / 17:00~22:00 · 주문 마감 14:00 / 21:00 · 부정기 휴무', rating: 3.55, reviewCount: 430, added: true, checked: foodChecked,
+    budget: '공식 물닭전골 세트 1인 ¥3,800 · 2인부터 주문 / 코스 ¥5,200', info: '토리덴보다 부담을 낮추고 캐널시티 옆에서 물닭전골을 먹는 대안. 본점의 실제 주소와 영업시간을 확인했으며, 비슷한 이름의 덴야마치점과 구분해요. 예약 가능합니다.',
+    reviewNote: '타베로그 3.55·후기 430명 규모를 확인했어요. 아주 높은 점수보다는 투명한 닭 육수, 공식 세트 가격과 캐널시티 동선을 함께 고려해 넣었습니다. Hot Restaurant 선정과 백명점은 구분합니다.',
+    route: '캐널시티 이스트빌딩 쪽·하카타역 하카타구치에서 공식 도보 약 8분. 저녁을 먹은 뒤 하카타역 광장으로 돌아오기 편해요.',
+    tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40044969/', official: 'https://mizutaki-hamadaya.jp/honten/',
+  },
   'hotel-breakfast': { name: '호텔 조식', menu: '숙소 확정 후 선택', info: '조식 포함 여부와 공항 이동 전 이용 가능 시간을 확인하세요.' },
+};
+
+export const foodGenres = {
+  noodles: { label: '우동·라멘', ids: ['karo', 'issou', 'hagakure', 'genki', 'kamakiri'] },
+  rice: { label: '정식·덮밥', ids: ['yoshizuka', 'yamamichi', 'hirao', 'uochu', 'umeyama', 'wakaba'] },
+  hotpot: { label: '전골', ids: ['yamanaka', 'toriden', 'hamadaya', 'ichifuji'] },
+  skewers: { label: '야키토리', ids: ['taka'] },
+  dumplings: { label: '교자·중식', ids: ['hountei', 'gyozalee'] },
+  curry: { label: '카레', ids: ['kubocurry'] },
+  bread: { label: '빵', ids: ['dacomecca', 'painstock', 'shiroya', 'fullfull'] },
+  snacks: { label: '간식·카페', ids: ['16ku', 'suzukake', 'tenjosajiki', 'bspeak', 'milch', 'korokke', 'purindora'] },
 };

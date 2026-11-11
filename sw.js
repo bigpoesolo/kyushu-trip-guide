@@ -1,13 +1,14 @@
 // Bump this version when shipping changes to the files in the offline cache.
-const cacheName = 'fukuoka-trip-v8';
+const cacheName = 'fukuoka-trip-v9';
 const shell = [
-  './', './style.css?v=8', './app.js?v=8', './trip.js?v=8', './guides.js?v=8', './reservations.js?v=8',
+  './', './style.css?v=9', './app.js?v=9', './trip.js?v=9', './guides.js?v=9', './reservations.js?v=9',
   './manifest.webmanifest', './icon-192.png', './icon-512.png', './yufuin-winter.webp',
   './photo-yufuin-station.webp', './photo-yunotsubo.webp', './photo-airport.webp', './photo-hakata.webp', './photo-kushida.webp',
   './photo-mameshiba.webp', './photo-street-snacks.webp', './photo-night-snacks.webp',
   './photo-hakata-bread.webp', './photo-hakata-ramen.webp', './photo-hakata-unagi.webp',
   './photo-hakata-tempura.webp', './photo-hakata-gyoza.webp',
   './photo-forza.webp',
+  './photo-food-toriden.jpg', './photo-food-gyozalee.png', './photo-food-hamadaya.jpg', './photo-food-wakaba.png',
 ];
 
 self.addEventListener('install', event => {

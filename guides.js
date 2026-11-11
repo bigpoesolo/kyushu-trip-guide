@@ -5,6 +5,10 @@ const photo = (file, caption, author, original, license, licensePath) => ({
 });
 
 export const photos = {
+  'food-toriden': { file: 'photo-food-toriden.jpg', caption: '토리덴 미즈타키 메뉴 예시 · 공식 사진', author: '토리덴', source: 'https://toriden.com/' },
+  'food-gyozalee': { file: 'photo-food-gyozalee.png', caption: '교자 리 군만두 · 공식 사진', author: '교자 리', source: 'https://gyouza-lee.com/' },
+  'food-hamadaya': { file: 'photo-food-hamadaya.jpg', caption: '하마다야 코스 구성 예시 · 공식 사진', author: '하마다야', source: 'https://mizutaki-hamadaya.jp/honten/' },
+  'food-wakaba': { file: 'photo-food-wakaba.png', caption: '돈카츠 와카바 텐진 본점 외관 · 공식 사진', author: '와카바', source: 'https://foryou-group.co.jp/brandfc/fukuoka/entry-83.html' },
   forza: { file: 'photo-forza.webp', caption: '리프레시 더블 객실 예시 · 공식 사진', author: '포르자 하카타구치', source: 'https://www.hotelforza.jp/hakataguchi/rooms/refresh-double.php' },
   yufuin: { file: 'yufuin-winter.webp', caption: '유후인 겨울 풍경 · 생성 이미지' },
   shiba: { file: 'photo-mameshiba.webp', caption: '마메시바 카페 분위기 · 생성 이미지' },
@@ -86,7 +90,7 @@ export const guides = {
   lunch: {
     origin: kushida, mode: 'walking',
     directions: '신사 바로 근처 카로노우론을 기존 13:00보다 앞당겨 12:15쯤 들러요. 일요일에도 재료가 소진되면 일찍 문을 닫을 수 있어요.',
-    hints: { genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때' },
+    hints: { genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때', kamakiri: '우동 유지 · 다이묘로 넘어갈 때', umeyama: '생선 정식 · 텐진 남쪽으로 동선 변경', wakaba: '돈카츠 · 니시나카스·텐진 쪽', kubocurry: '카레 · 점심만 · 다이묘로 동선 변경', gyozalee: '큰 교자·중식 · 야쿠인으로 동선 변경' },
     related: ['canal'],
   },
   canal: { origin: kushida, mode: 'walking', directions: '점심 뒤 가와바타 상점가와 캐널시티를 둘러본 뒤, 짐을 맡겨 둔 포르자 하카타구치로 돌아가 체크인해요.', related: ['hakata-hotel'] },
@@ -94,7 +98,7 @@ export const guides = {
   snack: { directions: '저녁에 나카스 쪽으로 가면 니시나카스 팡스톡이나 가와바타 스즈카케를 들르기 편해요. 야마미치로 바꾸면 16구가 같은 야쿠인 쪽이에요. 체크인이나 저녁이 밀리면 간식은 건너뛰어요.', related: ['dinner'] },
   dinner: {
     directions: '포르자 하카타구치 체크인 뒤 나카스로 이동하는 일정이에요. 저녁이 늦어져도 하카타역 크리스마스마켓은 일요일 23:00까지 운영합니다.',
-    hints: { hountei: '같은 나카스 2초메 · 가까운 대안', yamamichi: '장어를 먹고 싶을 때 · 자리 확인 후 이동', issou: '숙소가 하카타역 동쪽일 때' },
+    hints: { hountei: '같은 나카스 2초메 · 가까운 대안', yamamichi: '장어를 먹고 싶을 때 · 자리 확인 후 이동', issou: '하카타역 동쪽으로 이동할 때', toriden: '예약형 미즈타키 · 식사 소요 시간 확인', hamadaya: '캐널시티 옆 · 미즈타키 세트', ichifuji: '포르자와 같은 하카타구치 권역', umeyama: '텐진 남쪽 · 생선 정식', wakaba: '텐진 본점 · 일요일 저녁 마감 확인', gyozalee: '야쿠인 · 두 분은 현장 대기 기준', taka: '다카사고 · 고급 예약형 · 기본 동선에서 벗어남', kamakiri: '다이묘 · 중간 휴식 없는 우동집' },
     related: ['market'],
   },
   'airport-return': { origin: forza, mode: 'driving', directions: '포르자 하카타구치에서 출발해 후쿠오카공항 국제선 터미널로 이동해요. 지도는 차량 경로이며 택시 예약은 별도로 확인합니다.', links: [airportMap] },

@@ -129,6 +129,16 @@ h1 span { color: #e6b478; padding-inline: .13em; }
 .food-toolbar { display: flex; justify-content: space-between; align-items: start; gap: 10px; margin-bottom: 19px; }
 .filter { border-radius: 100px; font-size: .8rem; white-space: nowrap; }
 .award-filter { background: #f7e9d4; color: #794725; border-color: #e8d6b7; }
+.menu-toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.menu-toolbar .filter { font-size: .75rem; }
+.menu-toolbar .filter > span { opacity: .65; font-size: .7rem; }
+.food-research-note { margin: 0 0 18px; }
+.tag.rating { background: #eee3d2; color: #69432d; }
+.food-evidence { padding: 13px; border: 1px solid #e5d6bf; border-radius: 12px; background: #fbf2e3; }
+.food-score { display: flex; gap: 12px; align-items: center; margin: 10px 0; color: var(--forest); }
+.food-score > strong { font-size: 2rem; font-variant-numeric: tabular-nums; letter-spacing: -.05em; }
+.food-score > span { font-size: .8rem; font-weight: 700; }
+.food-score small { display: block; margin-top: 3px; color: var(--muted); font-size: .7rem; font-weight: 500; }
 .food-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
 .food-grid > li { min-width: 0; }
 .food-card { grid-template-columns: 45px minmax(0, 1fr) 16px; align-items: start; min-height: 105px; height: 100%; }
