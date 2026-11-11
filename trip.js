@@ -17,6 +17,8 @@ const fukuoka = '福岡空港 国際線ターミナル';
 const yufuin = '由布院駅前バスセンター';
 const luggage = 'ゆふいんチッキ 由布市ツーリストインフォメーションセンター';
 const hakata = '博多バスターミナル';
+const forza = 'ホテルフォルツァ博多駅博多口 福岡市博多区博多駅前2-1-15';
+const forzaOfficial = ['포르자 공식 · 짐 보관 안내', 'https://www.hotelforza.jp/hakataguchi/'];
 const cafe = '由布院豆柴カフェ 大分県由布市湯布院町川上1507-2';
 
 export const schedules = [
@@ -42,20 +44,20 @@ export const schedules = [
     { id: 'taxi-am', start: '07:20', title: '료칸 → 유후인역 앞 버스센터', subtitle: '택시 예약 요청 예정', status: 'todo', place: yufuin, area: 'yufuin', links: [hotel], detail: '전날 료칸에 오전 07:20 택시 사전 예약과 조기 체크아웃을 요청합니다. 이른 아침 무료 송영은 미확인입니다.' },
     { id: 'bus-ready', start: '07:35', end: '07:45', title: '유후인역 앞 버스센터 도착 목표', subtitle: '08:00 출발 · 15~25분 여유 목표', status: 'plan', place: yufuin, links: [busRoute], area: 'yufuin' },
     { id: 'bus-back', start: '08:00', end: '10:07', title: '유후인 → 하카타', subtitle: '하카타 버스터미널 도착 · 고속버스', status: 'confirmed', fixed: true, place: yufuin, links: [bus, busRoute], area: 'hakata' },
-    { id: 'hakata-bags', start: '10:10', end: '10:35', title: '하카타역에서 짐 보관', subtitle: '하카타역 로커 · 만석이면 마루이 2층', status: 'plan', place: 'JR 博多駅 福岡', area: 'hakata' },
+    { id: 'hakata-bags', start: '10:10', end: '10:35', title: '포르자에 짐 맡기기', subtitle: '하카타구치 도보 약 3분 · 체크인 전 보관 가능', status: 'plan', place: forza, area: 'hakata', links: [forzaOfficial], fallback: ['호텔에 맡기기 어려울 때', '하카타역 코인 로커를 확인하고, 만석이면 KITTE 하카타 마루이 2층 TABINAKA를 이용해요.'] },
     { id: 'brunch', start: '10:45', end: '11:25', title: '브런치', subtitle: '하카타역 근처에서 빵을 가볍게', status: 'plan', area: 'hakata', candidates: ['dacomecca', 'shiroya', 'fullfull'], meal: 'brunch', fallback: ['다코메카 줄이 길 때', '대기가 15분을 넘길 것 같으면 역 안 시로야에서 포장하거나, 구시다 신사 쪽으로 계속 걸어 더 풀풀 하카타에서 빵을 삽니다.'] },
     { id: 'shrine', start: '11:30', end: '12:15', title: '구시다 신사 · 가와바타', subtitle: '신사를 먼저 보고 상점가 산책은 점심 뒤로', status: 'plan', place: '櫛田神社 福岡', area: 'kushida' },
     { id: 'lunch', start: '12:15', end: '13:15', title: '점심', subtitle: '13시 전에 카로노우론 도착 목표', status: 'plan', area: 'kushida', candidates: ['karo', 'genki', 'hirao', 'uochu', 'issou'], meal: 'lunch', fallback: ['카로노우론 대기·품절 시', '고후쿠마치 쪽 하카타 겐키잇파이의 줄이 더 짧으면 이동합니다. 이미 텐진 쪽으로 넘어갔다면 히라오 다이묘점도 후보예요.'] },
     { id: 'canal', start: '13:15', end: '15:00', title: '가와바타 · 캐널시티 쇼핑', subtitle: '점심 뒤 도보로 둘러보고 하카타역 쪽으로', status: 'option', place: 'キャナルシティ博多', area: 'kushida', links: [['캐널시티 공식', 'https://canalcity.co.jp/']] },
-    { id: 'hakata-hotel', start: '15:15', end: '16:45', title: '하카타 숙소 체크인 · 휴식', subtitle: '하카타역 주변 가정 · 숙소 미정', status: 'todo', area: 'hakata' },
+    { id: 'hakata-hotel', start: '15:15', end: '16:45', title: '포르자 하카타구치 체크인 · 휴식', subtitle: '아고다 예약 확정 · 리프레시 더블 금연 · 2인', status: 'confirmed', booking: true, place: forza, area: 'hakata', links: [forzaOfficial, ['아고다 내 예약', 'https://www.agoda.com/account/bookings.html']], detail: '12/6~12/7 성인 2명·1박 예약이 확정됐어요. 체크인은 14:00부터, 체크아웃은 다음 날 11:00까지입니다. 실제 방문은 기존 일정대로 15:15를 목표로 해요. 예약 확정서와 결제·취소 조건은 아래 예약 정보와 관련 메일에서 확인하세요.' },
     { id: 'snack', start: '16:45', end: '17:30', title: '간식', subtitle: '나카스 쪽 저녁 동선에 맞을 때만', status: 'option', area: 'tenjin', candidates: ['painstock', '16ku', 'suzukake'], meal: 'snack' },
     { id: 'dinner', start: '18:00', end: '19:15', title: '저녁', subtitle: '요시즈카 2인 예약 가능 · 좌석 미확정', status: 'todo', area: 'kushida', candidates: ['yoshizuka', 'hountei', 'yamamichi', 'issou', 'yamanaka', 'genki'], meal: 'dinner', fallback: ['요시즈카 자리가 없거나 줄이 길 때', '같은 나카스 2초메의 호운테이 나카스 본점 자리를 확인합니다. 장어가 우선이면 야쿠인오도리의 야마미치 본점에 먼저 자리를 확인하고 이동하세요.'] },
     { id: 'market', start: '19:30', end: '20:30', title: '하카타역 크리스마스마켓 · 야경', subtitle: '저녁 뒤 역 광장 · 12/6 12:00~23:00 운영', status: 'option', place: '博多駅前広場', area: 'hakata', links: [['하카타역 행사 공식', 'https://christmas-advent.jp/fukuoka-hakata/']] },
-    { id: 'rest', start: '20:30', timeLabel: '20:30 이후', title: '호텔 복귀 · 휴식', status: 'plan', area: 'hakata' },
+    { id: 'rest', start: '20:30', timeLabel: '20:30 이후', title: '포르자 복귀 · 휴식', status: 'plan', place: forza, area: 'hakata' },
   ],
   [
     { id: 'breakfast', start: '08:00', end: '09:00', title: '아침', status: 'plan', area: 'hakata', candidates: ['shiroya', 'hotel-breakfast'], meal: 'brunch' },
-    { id: 'checkout', start: '09:00', end: '09:40', title: '체크아웃 · 짐 정리', status: 'plan', area: 'hakata' },
+    { id: 'checkout', start: '09:00', end: '09:40', title: '포르자 체크아웃 · 짐 정리', subtitle: '숙소 체크아웃 마감 11:00 · 공항 이동은 09:45 목표', status: 'plan', place: forza, area: 'hakata' },
     { id: 'airport-return', start: '09:45', timeLabel: '09:45 전후', title: '하카타 → 후쿠오카공항 국제선', subtitle: '택시 기본안 · 대중교통 대안', status: 'todo', place: fukuoka, links: [airport, ['하카타역 ↔ 국제선 버스', 'https://www.nishitetsu.jp/bus/rosen/akeito/']], detail: '국제선 터미널 도착 목표는 10:15~10:30입니다.', fallback: ['대중교통으로 갈 때', '하카타역에서 국제선행 직행 버스를 확인합니다. 지하철을 이용하면 국내선 쪽에서 국제선 터미널 연결편을 확인하세요.'] },
     { id: 'airport-arrival', start: '10:15', end: '10:30', title: '국제선 터미널 도착 목표', status: 'plan', place: fukuoka, links: [airport] },
     { id: 'depart', start: '10:30', end: '12:00', title: '출국 수속 · 공항 내 간단한 식사', subtitle: '수하물·보안검색·탑승 마감 우선', status: 'plan', place: fukuoka, links: [airline, airport] },
@@ -80,7 +82,7 @@ export const tasks = [
   { id: 'locker', event: 'bags', title: '유후인역 짐 보관과 마감 확인', info: '17:00 이전 회수 가능 여부' },
   { id: 'cafe-alt', event: 'shiba', title: '마메시바 카페 입장 시각 확인', info: '15:50쯤까지 입장 가능한 경우에만 방문' },
   { id: 'pickup', event: 'collect', title: '픽업 요청용 일본 동전 준비', info: '짐 회수 후 역 공중전화로 17:00까지 요청 · 안 되면 택시' },
-  { id: 'hotel', event: 'hakata-hotel', title: '하카타 숙소 확정', info: '숙소 위치와 짐 보관 가능 여부' },
+  { id: 'hotel-payment', event: 'hakata-hotel', title: '12/1 포르자 자동 결제 확인', info: '숙소 예약 확정 · USD 157.34 기준, 결제일 환율·5% 조정 및 현지 숙박세 별도 확인' },
   { id: 'eel', event: 'dinner', title: '요시즈카 우나기야 예약 가능 여부 확인', info: '12/6 일요일 저녁 2인' },
   { id: 'airport', event: 'airport-return', title: '귀국일 공항 이동수단 정하기', info: '후쿠오카공항 국제선 터미널' },
 ];

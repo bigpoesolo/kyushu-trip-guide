@@ -5,6 +5,7 @@ const photo = (file, caption, author, original, license, licensePath) => ({
 });
 
 export const photos = {
+  forza: { file: 'photo-forza.webp', caption: '리프레시 더블 객실 예시 · 공식 사진', author: '포르자 하카타구치', source: 'https://www.hotelforza.jp/hakataguchi/rooms/refresh-double.php' },
   yufuin: { file: 'yufuin-winter.webp', caption: '유후인 겨울 풍경 · 생성 이미지' },
   shiba: { file: 'photo-mameshiba.webp', caption: '마메시바 카페 분위기 · 생성 이미지' },
   snacks: { file: 'photo-street-snacks.webp', caption: '유후인 길거리 간식 예시 · 생성 이미지' },
@@ -29,7 +30,8 @@ const photoGroups = {
   night: ['late-snack'],
   yufuin: ['ryokan', 'sukiyaki', 'bath', 'early'],
   kushida: ['shrine', 'lunch', 'canal', 'dinner'],
-  hakata: ['bus-back', 'hakata-bags', 'brunch', 'hakata-hotel', 'snack', 'market', 'rest', 'breakfast', 'checkout'],
+  hakata: ['bus-back', 'hakata-bags', 'brunch', 'snack', 'market', 'breakfast'],
+  forza: ['hakata-hotel', 'rest', 'checkout'],
 };
 
 export const eventPhotos = Object.fromEntries(Object.entries(photoGroups).flatMap(([key, ids]) => ids.map(id => [id, photos[key]])));
@@ -38,6 +40,7 @@ const station = 'JR 由布院駅 大分県由布市';
 const cafe = '由布院豆柴カフェ 大分県由布市湯布院町川上1507-2';
 const ryokan = '由布の彩 YADOYA おおはし 大分県由布市湯布院町川北1235';
 const hakataStation = 'JR 博多駅 福岡';
+const forza = 'ホテルフォルツァ博多駅博多口 福岡市博多区博多駅前2-1-15';
 const kushida = '櫛田神社 福岡';
 const roomPhotos = ['료칸 로프트 객실 사진·시설', 'https://yufunoirodori-oohashi.jp/room'];
 const airportMap = ['국제선 층별 안내도', 'https://www.fukuoka-airport.jp/assets/map/file/fukuoka_airport_int_map.pdf'];
@@ -69,13 +72,13 @@ export const guides = {
   },
   'hakata-bags': {
     origin: '博多バスターミナル', mode: 'walking',
-    directions: '10:07 버스터미널 도착 예정. 연결된 하카타역의 코인 로커를 먼저 봐요. 로커가 차면 하카타구치 쪽 KITTE 하카타의 하카타 마루이 2층 TABINAKA(10:00~21:00)에서 맡길 수 있어요. 숙소가 역 근처이고 체크인 전 보관이 확인되면 숙소에 맡겨도 됩니다.',
+    directions: '10:07 버스터미널 도착 예정. 하카타구치 쪽 포르자 하카타구치로 걸어가 짐을 맡겨요. 호텔 공식 안내에 체크인 전 짐 보관이 가능하며, 하카타역 하카타구치에서 도보 약 3분입니다. 짐을 맡긴 뒤 다코메카 쪽으로 이동해요.',
     links: [['하카타역 로커 위치', 'https://www.jrhakatacity.com/coinlocker/'], ['마루이 2층 짐 보관', 'https://tabinaka-hakata.com/']],
     related: ['brunch', 'hakata-hotel'],
   },
   brunch: {
-    origin: hakataStation, mode: 'walking',
-    directions: '역에 짐을 맡긴 뒤 하카타구치 쪽에서 빵을 가볍게 먹고 구시다 신사 쪽으로 걸어요. 점심까지 간격이 짧으니 포장도 좋아요.',
+    origin: forza, mode: 'walking',
+    directions: '포르자에 짐을 맡긴 뒤 하카타구치 쪽에서 빵을 가볍게 먹고 구시다 신사 쪽으로 걸어요. 점심까지 간격이 짧으니 포장도 좋아요.',
     hints: { shiroya: '역 안에서 바로 포장', fullfull: '구시다 신사 가는 길에 포장' },
     related: ['shrine', 'lunch'],
   },
@@ -86,13 +89,14 @@ export const guides = {
     hints: { genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때' },
     related: ['canal'],
   },
-  canal: { origin: kushida, mode: 'walking', directions: '점심 뒤 가와바타 상점가와 캐널시티를 한 번에 둘러보고, 필요하면 역에서 짐을 찾아 체크인해요.', related: ['hakata-hotel'] },
+  canal: { origin: kushida, mode: 'walking', directions: '점심 뒤 가와바타 상점가와 캐널시티를 둘러본 뒤, 짐을 맡겨 둔 포르자 하카타구치로 돌아가 체크인해요.', related: ['hakata-hotel'] },
+  'hakata-hotel': { origin: 'キャナルシティ博多', mode: 'walking', directions: '캐널시티에서 하카타역 하카타구치 방향으로 돌아옵니다. 예약한 곳은 포르자 하카타구치이며, 지쿠시구치 지점과 구분해요. 오전에 맡긴 짐을 찾고 체크인합니다.', related: ['hakata-bags', 'dinner'] },
   snack: { directions: '저녁에 나카스 쪽으로 가면 니시나카스 팡스톡이나 가와바타 스즈카케를 들르기 편해요. 야마미치로 바꾸면 16구가 같은 야쿠인 쪽이에요. 체크인이나 저녁이 밀리면 간식은 건너뛰어요.', related: ['dinner'] },
   dinner: {
-    directions: '체크인 뒤 나카스로 이동하는 일정이에요. 숙소 위치에 따라 이동 시간이 달라져요. 저녁이 늦어져도 하카타역 크리스마스마켓은 일요일 23:00까지 운영합니다.',
+    directions: '포르자 하카타구치 체크인 뒤 나카스로 이동하는 일정이에요. 저녁이 늦어져도 하카타역 크리스마스마켓은 일요일 23:00까지 운영합니다.',
     hints: { hountei: '같은 나카스 2초메 · 가까운 대안', yamamichi: '장어를 먹고 싶을 때 · 자리 확인 후 이동', issou: '숙소가 하카타역 동쪽일 때' },
     related: ['market'],
   },
-  'airport-return': { links: [airportMap] },
+  'airport-return': { origin: forza, mode: 'driving', directions: '포르자 하카타구치에서 출발해 후쿠오카공항 국제선 터미널로 이동해요. 지도는 차량 경로이며 택시 예약은 별도로 확인합니다.', links: [airportMap] },
   depart: { links: [airportMap] },
 };

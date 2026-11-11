@@ -153,6 +153,26 @@ h1 span { color: #e6b478; padding-inline: .13em; }
 .task-card .done { text-decoration: line-through; color: var(--muted); }
 .complete-heading { margin-top: 20px; }
 
+.mail-note { display: flex; gap: 11px; align-items: start; padding: 13px 16px; margin-bottom: 20px; border: 1px solid #d8e2d3; border-radius: 12px; background: var(--sage); color: var(--forest); }
+.mail-note > span { padding-top: 3px; }
+.mail-note p { margin: 0; font-size: .83rem; }
+.mail-list { display: grid; gap: 9px; list-style: none; padding: 0; margin: 0; }
+.mail-card { display: grid; grid-template-columns: 44px minmax(0, 1fr) 16px; align-items: center; gap: 12px; width: 100%; padding: 15px; text-align: left; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+.mail-card:hover { border-color: #a4b3a3; background: #faf7ee; }
+.mail-card strong { display: block; font-size: .95rem; letter-spacing: -.025em; }
+.mail-card .chips { margin-top: 7px; }
+.mail-card > svg { width: 16px; height: 16px; }
+.mark-mail { color: var(--forest); background: var(--sage); }
+.mail-notes { margin: 0; padding-left: 20px; }
+.mail-notes li { padding: 4px 0; font-size: .87rem; line-height: 1.65; word-break: keep-all; overflow-wrap: anywhere; }
+.booking-summary { padding: 15px; border: 1px solid #d8e2d3; border-radius: 13px; background: #f0f4eb; }
+.booking-summary .booking-name { font: italic 1.05rem var(--serif); color: var(--forest); }
+.booking-facts { margin: 0; }
+.booking-facts > div { display: grid; grid-template-columns: 65px minmax(0, 1fr); gap: 9px; padding: 8px 0; border-bottom: 1px solid #dfe6d9; font-size: .81rem; line-height: 1.5; }
+.booking-facts > div:last-child { border-bottom: 0; }
+.booking-facts dt { color: var(--muted); }
+.booking-facts dd { margin: 0; overflow-wrap: anywhere; }
+
 footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 7px 16px; margin-top: 24px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; }
 .footer-brand { font-size: .61rem; font-weight: 750; letter-spacing: .14em; }
 #offline-state::before { content: ''; display: inline-block; width: 6px; height: 6px; margin: 0 5px 1px 0; border-radius: 100%; background: #69846e; }
@@ -218,8 +238,8 @@ textarea { min-height: 68px; resize: vertical; }
   .brand-icon { width: 33px; height: 33px; border-radius: 10px; }
   .brand-icon svg { width: 20px; height: 20px; }
   .edition { font-size: .55rem; }
-  .nav { position: fixed; z-index: 4; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 6px 14px calc(6px + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-radius: 0; background: var(--surface); box-shadow: 0 -5px 25px #342d2210; }
-  .nav button { min-height: 51px; padding: 5px 4px; gap: 5px; }
+  .nav { position: fixed; z-index: 4; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 6px 14px calc(6px + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-radius: 0; background: var(--surface); box-shadow: 0 -5px 25px #342d2210; }
+  .nav button { min-height: 51px; padding: 5px 3px; gap: 4px; font-size: .76rem; }
   .nav button > svg { width: 17px; height: 17px; }
   .hero { min-height: clamp(200px, 55vw, 280px); padding: 20px; border-radius: 17px; }
   .hero::after { background: linear-gradient(90deg, #18231a57 0%, transparent 80%), linear-gradient(0deg, #17231be0 0%, #17231b16 85%); }
