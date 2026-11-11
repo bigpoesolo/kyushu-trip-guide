@@ -5,6 +5,9 @@ const photo = (file, caption, author, original, license, licensePath) => ({
 });
 
 export const photos = {
+  'food-sofuren': { file: 'photo-food-sofuren.webp', caption: '소후렌 하카타 에키마에점 외관 · 공식 사진', author: '소후렌', source: 'https://www.sofuren.com/stores/hakata-ekimae' },
+  'food-daichi': { file: 'photo-food-daichi.jpg', caption: '다이치 우동 하카타역 지하점 내부 · 공식 사진', author: '다이치 우동', source: 'https://daichinoudon.pro/?p=15' },
+  'food-mako': { file: 'photo-food-mako.jpg', caption: '마코 야키토리 코스 예시 · TableCheck 매장 제공 사진', author: '야키토리 마코', source: 'https://www.tablecheck.com/ja/yakitori-mako' },
   'food-toriden': { file: 'photo-food-toriden.jpg', caption: '토리덴 미즈타키 메뉴 예시 · 공식 사진', author: '토리덴', source: 'https://toriden.com/' },
   'food-gyozalee': { file: 'photo-food-gyozalee.png', caption: '교자 리 군만두 · 공식 사진', author: '교자 리', source: 'https://gyouza-lee.com/' },
   'food-hamadaya': { file: 'photo-food-hamadaya.jpg', caption: '하마다야 코스 구성 예시 · 공식 사진', author: '하마다야', source: 'https://mizutaki-hamadaya.jp/honten/' },
@@ -33,9 +36,11 @@ const photoGroups = {
   shiba: ['shiba'],
   night: ['late-snack'],
   yufuin: ['ryokan', 'sukiyaki', 'bath', 'early'],
-  kushida: ['shrine', 'lunch', 'canal', 'dinner'],
-  hakata: ['bus-back', 'hakata-bags', 'brunch', 'snack', 'market', 'breakfast'],
-  forza: ['hakata-hotel', 'rest', 'checkout'],
+  kushida: ['shrine', 'lunch', 'canal'],
+  hakata: ['bus-back', 'hakata-bags', 'brunch', 'market-before', 'market', 'breakfast', 'mako-transit', 'mako-return'],
+  forza: ['hakata-hotel', 'rest', 'checkout', 'snack'],
+  'food-mako': ['mako-ready', 'dinner'],
+  'food-sofuren': ['night-food'],
 };
 
 export const eventPhotos = Object.fromEntries(Object.entries(photoGroups).flatMap(([key, ids]) => ids.map(id => [id, photos[key]])));
@@ -45,6 +50,8 @@ const cafe = '由布院豆柴カフェ 大分県由布市湯布院町川上1507-
 const ryokan = '由布の彩 YADOYA おおはし 大分県由布市湯布院町川北1235';
 const hakataStation = 'JR 博多駅 福岡';
 const forza = 'ホテルフォルツァ博多駅博多口 福岡市博多区博多駅前2-1-15';
+const mako = '焼鳥まこ 福岡市中央区薬院2-14-18 YAKUIN KZ LIFE BLD. 2F';
+const sofuren = '想夫恋 博多駅前店 福岡市博多区博多駅前3-16-2 宮原ビル1F';
 const kushida = '櫛田神社 福岡';
 const roomPhotos = ['료칸 로프트 객실 사진·시설', 'https://yufunoirodori-oohashi.jp/room'];
 const airportMap = ['국제선 층별 안내도', 'https://www.fukuoka-airport.jp/assets/map/file/fukuoka_airport_int_map.pdf'];
@@ -82,25 +89,42 @@ export const guides = {
   },
   brunch: {
     origin: forza, mode: 'walking',
-    directions: '포르자에 짐을 맡긴 뒤 하카타구치 쪽에서 빵을 가볍게 먹고 구시다 신사 쪽으로 걸어요. 점심까지 간격이 짧으니 포장도 좋아요.',
+    directions: '포르자에 짐을 맡긴 뒤 하카타구치 쪽에서 빵을 가볍게 먹어요. 점심은 우동집 선택 중이며, 구시다 신사·캐널시티는 점심 뒤 선택 방문입니다. 점심까지 간격이 짧으니 빵은 소량 또는 포장도 좋아요.',
     hints: { shiroya: '역 안에서 바로 포장', fullfull: '구시다 신사 가는 길에 포장' },
-    related: ['shrine', 'lunch'],
+    related: ['lunch', 'shrine'],
   },
-  shrine: { origin: hakataStation, mode: 'walking', directions: '브런치 뒤 신사를 먼저 보고 12:15쯤 점심을 먹어요. 가와바타 상점가는 점심 뒤에 천천히 둘러봅니다.', related: ['lunch', 'canal'] },
+  shrine: { origin: hakataStation, mode: 'walking', directions: '우동 점심을 먹은 뒤 짧게 들르는 선택 일정입니다. 하카타 크리스마스마켓이 메인이므로 대기나 쇼핑이 길어지면 생략해도 좋아요.', related: ['canal', 'hakata-hotel'] },
   lunch: {
     origin: kushida, mode: 'walking',
-    directions: '신사 바로 근처 카로노우론을 기존 13:00보다 앞당겨 12:15쯤 들러요. 일요일에도 재료가 소진되면 일찍 문을 닫을 수 있어요.',
-    hints: { genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때', kamakiri: '우동 유지 · 다이묘로 넘어갈 때', umeyama: '생선 정식 · 텐진 남쪽으로 동선 변경', wakaba: '돈카츠 · 니시나카스·텐진 쪽', kubocurry: '카레 · 점심만 · 다이묘로 동선 변경', gyozalee: '큰 교자·중식 · 야쿠인으로 동선 변경' },
+    directions: '일요일 점심은 우동집 선택 중입니다. 마켓 중심 일정에는 포르자와 같은 하카타구치 쪽 다이치 우동이 편하고, 신사 쪽에서 먹고 싶으면 카로노우론을 비교해요. 우동 점심 → 구시다 신사·캐널시티 선택 방문 → 14:30 포르자 휴식 순서입니다. 타이라와 하가쿠레는 일요일 휴무라 이날 후보에서 제외했습니다.',
+    hints: { daichi: '하카타역·포르자 근처 · 큰 우엉튀김 우동', genki: '가와바타 북쪽 · 줄 비교 후 이동', hirao: '이미 텐진에 있을 때', issou: '하카타역 동쪽에 있을 때', kamakiri: '우동 유지 · 다이묘로 넘어갈 때', umeyama: '생선 정식 · 텐진 남쪽으로 동선 변경', wakaba: '돈카츠 · 니시나카스·텐진 쪽', kubocurry: '카레 · 점심만 · 다이묘로 동선 변경', gyozalee: '큰 교자·중식 · 야쿠인으로 동선 변경' },
     related: ['canal'],
   },
-  canal: { origin: kushida, mode: 'walking', directions: '점심 뒤 가와바타 상점가와 캐널시티를 둘러본 뒤, 짐을 맡겨 둔 포르자 하카타구치로 돌아가 체크인해요.', related: ['hakata-hotel'] },
-  'hakata-hotel': { origin: 'キャナルシティ博多', mode: 'walking', directions: '캐널시티에서 하카타역 하카타구치 방향으로 돌아옵니다. 예약한 곳은 포르자 하카타구치이며, 지쿠시구치 지점과 구분해요. 오전에 맡긴 짐을 찾고 체크인합니다.', related: ['hakata-bags', 'dinner'] },
-  snack: { directions: '저녁에 나카스 쪽으로 가면 니시나카스 팡스톡이나 가와바타 스즈카케를 들르기 편해요. 야마미치로 바꾸면 16구가 같은 야쿠인 쪽이에요. 체크인이나 저녁이 밀리면 간식은 건너뛰어요.', related: ['dinner'] },
-  dinner: {
-    directions: '포르자 하카타구치 체크인 뒤 나카스로 이동하는 일정이에요. 저녁이 늦어져도 하카타역 크리스마스마켓은 일요일 23:00까지 운영합니다.',
-    hints: { hountei: '같은 나카스 2초메 · 가까운 대안', yamamichi: '장어를 먹고 싶을 때 · 자리 확인 후 이동', issou: '하카타역 동쪽으로 이동할 때', toriden: '예약형 미즈타키 · 식사 소요 시간 확인', hamadaya: '캐널시티 옆 · 미즈타키 세트', ichifuji: '포르자와 같은 하카타구치 권역', umeyama: '텐진 남쪽 · 생선 정식', wakaba: '텐진 본점 · 일요일 저녁 마감 확인', gyozalee: '야쿠인 · 두 분은 현장 대기 기준', taka: '다카사고 · 고급 예약형 · 기본 동선에서 벗어남', kamakiri: '다이묘 · 중간 휴식 없는 우동집' },
-    related: ['market'],
+  canal: { origin: kushida, mode: 'walking', directions: '캐널시티는 짧게 둘러보고 14:15쯤 포르자로 출발해요. 14:30 체크인·휴식과 15:45 마켓 관람을 우선하는 선택 일정입니다.', related: ['hakata-hotel'] },
+  'hakata-hotel': { origin: 'キャナルシティ博多', mode: 'walking', directions: '하카타역 하카타구치 방향으로 돌아와 14:30쯤 체크인합니다. 예약한 곳은 포르자 하카타구치이며 지쿠시구치 지점과 구분해요. 맡긴 짐을 찾고 15:30까지 쉰 뒤 하카타역 마켓으로 나갑니다.', related: ['hakata-bags', 'market-before'] },
+  snack: { directions: '15:30 호텔에서 예약 화면과 교통카드를 준비하고 하카타역 광장으로 나갑니다. 간식은 소량만 먹고 다른 빵집으로 우회하지 않아요.', related: ['market-before', 'dinner'] },
+  'market-before': { origin: forza, mode: 'walking', directions: '포르자 하카타구치에서 하카타역 하카타구치 광장으로 걸어요. 15:45~17:05가 저녁 전 마켓 관람 시간입니다. 17:05에는 역 안 나나쿠마선 표지판을 따라 마코로 출발합니다. 일요일 운영 12:00~23:00·마지막 주문 22:45. 밤 조명은 식사 후 다시 봐요.', related: ['mako-transit', 'market'] },
+  'mako-transit': {
+    origin: '博多駅前広場', mode: 'transit',
+    directions: '기본은 17:05 하카타역 크리스마스마켓 출발. 마켓을 건너뛰고 호텔에서 바로 가면 17:15 포르자 출발을 목표로 해요.\n① 하카타역에서 초록색 나나쿠마선(七隈線) 표지판을 따라갑니다. 광장부터 승강장까지 역내 이동 약 10분, 대기·혼잡 여유를 따로 잡아요.\n② 하시모토(橋本) 방면 열차 탑승. 하카타 N18 → 구시다진자마에 N17 → 텐진미나미 N16 → 와타나베도리 N15 → 야쿠인 N14 → 야쿠인오도리 N13. 환승 없이 5정거장, 승차 약 8~9분, 편도 성인 1인 ¥260입니다.\n③ 薬院(야쿠인)에서 내리지 말고 薬院大通(야쿠인오도리)까지 갑니다. 1번 출구로 나와 薬院2-14-18 건물 2층 마코까지 도보 약 3분. 출구까지 역내 이동은 별도예요.\n17:45~17:50 도착을 목표로 잡았으며 특정 열차 시각은 당일 길찾기로 확인해요.',
+    links: [['하카타 → 야쿠인오도리 노선·운임', 'https://transit.yahoo.co.jp/search/result/%E5%8D%9A%E5%A4%9A-%E8%96%AC%E9%99%A2%E5%A4%A7%E9%80%9A'], ['야쿠인오도리역 공식 · 출구·주말 시각표', 'https://subway.city.fukuoka.lg.jp/eki/stations/yakuinoo.php'], ['마코 위치·1번 출구 안내', 'https://r.gnavi.co.jp/kmd1t4s00000/map/']],
+    related: ['mako-ready', 'dinner'],
   },
+  'mako-ready': { origin: '薬院大通駅 1番出口 福岡市', mode: 'walking', directions: '야쿠인오도리역 1번 출구에서 건물 주소 薬院2-14-18을 확인하며 도보 약 3분. 식당은 YAKUIN KZ LIFE BLD. 2층입니다. 17:50 도착 목표로 예약자 이름과 확정 화면을 준비해요.', related: ['dinner'] },
+  dinner: {
+    origin: '博多駅前広場', mode: 'transit',
+    directions: '17:05 하카타역 마켓 출발 → 나나쿠마선 하시모토 방면 → 야쿠인오도리역 1번 출구 → 도보 약 3분 → 마코 2층. 호텔에서 바로 가면 17:15 포르자 출발을 목표로 해요. 17:45~17:50 도착·18:00 코스 시작입니다. 상세한 역 순서와 교통비는 「하카타역 마켓 → 마코 · 지하철」 일정에서 확인해요.',
+    related: ['mako-transit', 'mako-ready', 'mako-return', 'market'],
+  },
+  'mako-return': {
+    origin: mako, mode: 'transit',
+    directions: '소후렌에 들를 때는 하카타까지 가지 않고 한 정거장 앞 구시다진자마에역에서 내려요.\n① 마코 → 야쿠인오도리역 도보 약 3분.\n② 나나쿠마선 하카타(博多) 방면 → 야쿠인 → 와타나베도리 → 텐진미나미 → 구시다진자마에(櫛田神社前). 환승 없이 4정거장, 약 7분, 1인 ¥210입니다.\n③ 구시다진자마에역 4번 출구에서 소후렌 하카타 에키마에점까지 도보 약 3~4분.\n20:30쯤 마코에서 출발해 20:55 소후렌 도착을 목표로 하는 계획입니다. 가는 편 하카타 → 야쿠인오도리 ¥260, 오는 편 야쿠인오도리 → 구시다진자마에 ¥210으로 두 명 합계 ¥940 기준입니다.\n야식을 건너뛰면 종점 하카타까지 그대로 타고 돌아오면 됩니다(편도 1인 ¥260, 하카타 왕복 두 명 ¥1,040).',
+    links: [['야쿠인오도리 → 구시다진자마에 노선·운임', 'https://transit.yahoo.co.jp/search/result/%E8%96%AC%E9%99%A2%E5%A4%A7%E9%80%9A-%E6%AB%9B%E7%94%B0%E7%A5%9E%E7%A4%BE%E5%89%8D'], ['야쿠인오도리역 공식 · 하카타 방면 주말 시각표', 'https://subway.city.fukuoka.lg.jp/eki/stations/yakuinoo.php']],
+    related: ['night-food', 'market', 'rest'],
+  },
+  'night-food': { origin: '櫛田神社前駅 4番出口 福岡市', mode: 'walking', directions: '구시다진자마에역 4번 출구에서 博多駅前3-16-2 소후렌으로 걸어요. 도보 약 3~4분이며 포르자와 같은 하카타역 서쪽 권역입니다. 야식 뒤에는 하카타역 마켓 또는 호텔로 걸어갈 수 있어요. 공식 마감 21:30, 마지막 주문은 미공개라 방문 전에 확인합니다.', related: ['mako-return', 'market', 'rest'] },
+  market: { origin: sofuren, mode: 'walking', directions: '소후렌에 들렀다면 약 10분의 이동 여유를 두고 하카타역 하카타구치 광장으로 걸어갑니다. 야식을 생략하면 지하철로 하카타역까지 바로 와서 20:55쯤부터 밤 마켓을 볼 수 있어요. 22:30쯤 호텔로 출발하는 계획이며 일요일 마감 23:00·마지막 주문 22:45입니다.', related: ['rest'] },
+  rest: { origin: '博多駅前広場', mode: 'walking', directions: '하카타역 하카타구치 광장에서 포르자 하카타구치로 걸어 돌아갑니다. 호텔은 博多駅前2-1-15이며 지쿠시구치 지점과 구분해요.' },
   'airport-return': { origin: forza, mode: 'driving', directions: '포르자 하카타구치에서 출발해 후쿠오카공항 국제선 터미널로 이동해요. 지도는 차량 경로이며 택시 예약은 별도로 확인합니다.', links: [airportMap] },
   depart: { links: [airportMap] },
 };

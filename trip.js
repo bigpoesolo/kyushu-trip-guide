@@ -1,6 +1,6 @@
 export const days = [
   { date: '12/5 토', short: '유후인', title: '공항에서 유후인으로', description: '마메시바 카페 · 유노츠보 · 료칸', area: 'yufuin', warning: ['bus-out', '공항 환승 68분', '12:00 도착 예정 → 13:08 버스 출발'] },
-  { date: '12/6 일', short: '후쿠오카', title: '하카타와 텐진', description: '이른 퇴실 · 하카타 맛집과 관광', area: 'hakata', warning: ['taxi-am', '아침 택시 미예약', '07:20 택시와 조기 체크아웃 사전 협의'] },
+  { date: '12/6 일', short: '후쿠오카', title: '하카타 크리스마스마켓', description: '마켓 중심으로 · 우동 점심 · 18:00 마코', area: 'hakata', warning: ['taxi-am', '아침 택시 미예약', '07:20 택시와 조기 체크아웃 사전 협의'] },
   { date: '12/7 월', short: '귀국', title: '하카타에서 공항으로', description: '아침 식사 · 국제선 터미널 · 귀국', area: 'hakata', warning: ['airport-return', '국제선 터미널', '10:15~10:30 도착 목표'] },
 ];
 
@@ -19,6 +19,9 @@ const luggage = 'ゆふいんチッキ 由布市ツーリストインフォメ�
 const hakata = '博多バスターミナル';
 const forza = 'ホテルフォルツァ博多駅博多口 福岡市博多区博多駅前2-1-15';
 const forzaOfficial = ['포르자 공식 · 짐 보관 안내', 'https://www.hotelforza.jp/hakataguchi/'];
+const mako = '焼鳥まこ 福岡市中央区薬院2-14-18 YAKUIN KZ LIFE BLD. 2F';
+const makoBooking = ['마코 예약 안내 · TableCheck', 'https://www.tablecheck.com/ko/shops/yakitori-mako/reserve'];
+const sofuren = '想夫恋 博多駅前店 福岡市博多区博多駅前3-16-2 宮原ビル1F';
 const cafe = '由布院豆柴カフェ 大分県由布市湯布院町川上1507-2';
 
 export const schedules = [
@@ -46,14 +49,19 @@ export const schedules = [
     { id: 'bus-back', start: '08:00', end: '10:07', title: '유후인 → 하카타', subtitle: '하카타 버스터미널 도착 · 고속버스', status: 'confirmed', fixed: true, place: yufuin, links: [bus, busRoute], area: 'hakata' },
     { id: 'hakata-bags', start: '10:10', end: '10:35', title: '포르자에 짐 맡기기', subtitle: '하카타구치 도보 약 3분 · 체크인 전 보관 가능', status: 'plan', place: forza, area: 'hakata', links: [forzaOfficial], fallback: ['호텔에 맡기기 어려울 때', '하카타역 코인 로커를 확인하고, 만석이면 KITTE 하카타 마루이 2층 TABINAKA를 이용해요.'] },
     { id: 'brunch', start: '10:45', end: '11:25', title: '브런치', subtitle: '하카타역 근처에서 빵을 가볍게', status: 'plan', area: 'hakata', candidates: ['dacomecca', 'shiroya', 'fullfull'], meal: 'brunch', fallback: ['다코메카 줄이 길 때', '대기가 15분을 넘길 것 같으면 역 안 시로야에서 포장하거나, 구시다 신사 쪽으로 계속 걸어 더 풀풀 하카타에서 빵을 삽니다.'] },
-    { id: 'shrine', start: '11:30', end: '12:15', title: '구시다 신사 · 가와바타', subtitle: '신사를 먼저 보고 상점가 산책은 점심 뒤로', status: 'plan', place: '櫛田神社 福岡', area: 'kushida' },
-    { id: 'lunch', start: '12:15', end: '13:15', title: '점심', subtitle: '13시 전에 카로노우론 도착 목표', status: 'plan', area: 'kushida', candidates: ['karo', 'genki', 'hirao', 'uochu', 'issou', 'umeyama', 'wakaba', 'kubocurry', 'kamakiri', 'gyozalee'], meal: 'lunch', fallback: ['카로노우론 대기·품절 시', '고후쿠마치 쪽 하카타 겐키잇파이의 줄이 더 짧으면 이동합니다. 이미 텐진 쪽으로 넘어갔다면 히라오·가마키리 우동·와카바를 비교해요. 우메야마·교자 리·쿠보카레는 점심 동선을 텐진·야쿠인 쪽으로 바꿀 때 고릅니다.'] },
-    { id: 'canal', start: '13:15', end: '15:00', title: '가와바타 · 캐널시티 쇼핑', subtitle: '점심 뒤 도보로 둘러보고 하카타역 쪽으로', status: 'option', place: 'キャナルシティ博多', area: 'kushida', links: [['캐널시티 공식', 'https://canalcity.co.jp/']] },
-    { id: 'hakata-hotel', start: '15:15', end: '16:45', title: '포르자 하카타구치 체크인 · 휴식', subtitle: '아고다 예약 확정 · 리프레시 더블 금연 · 2인', status: 'confirmed', booking: true, place: forza, area: 'hakata', links: [forzaOfficial, ['아고다 내 예약', 'https://www.agoda.com/account/bookings.html']], detail: '12/6~12/7 성인 2명·1박 예약이 확정됐어요. 체크인은 14:00부터, 체크아웃은 다음 날 11:00까지입니다. 실제 방문은 기존 일정대로 15:15를 목표로 해요. 예약 확정서와 결제·취소 조건은 아래 예약 정보와 관련 메일에서 확인하세요.' },
-    { id: 'snack', start: '16:45', end: '17:30', title: '간식', subtitle: '나카스 쪽 저녁 동선에 맞을 때만', status: 'option', area: 'tenjin', candidates: ['painstock', '16ku', 'suzukake'], meal: 'snack' },
-    { id: 'dinner', start: '18:00', end: '19:15', title: '저녁', subtitle: '요시즈카 2인 예약 가능 · 좌석 미확정', status: 'todo', area: 'kushida', candidates: ['yoshizuka', 'hountei', 'yamamichi', 'issou', 'yamanaka', 'genki', 'toriden', 'hamadaya', 'ichifuji', 'umeyama', 'wakaba', 'gyozalee', 'taka', 'kamakiri'], meal: 'dinner', fallback: ['요시즈카 자리가 없거나 줄이 길 때', '같은 나카스의 호운테이, 하카타구치의 이치후지, 캐널시티 옆 하마다야를 비교해요. 토리덴과 야키토리 타카는 미리 예약을 확인할 별도 저녁 후보입니다. 전골·코스를 고르면 식사 소요 시간을 확인하고 뒤의 크리스마스마켓을 늦춰요.'] },
-    { id: 'market', start: '19:30', end: '20:30', title: '하카타역 크리스마스마켓 · 야경', subtitle: '저녁 뒤 역 광장 · 12/6 12:00~23:00 운영', status: 'option', place: '博多駅前広場', area: 'hakata', links: [['하카타역 행사 공식', 'https://christmas-advent.jp/fukuoka-hakata/']] },
-    { id: 'rest', start: '20:30', timeLabel: '20:30 이후', title: '포르자 복귀 · 휴식', status: 'plan', place: forza, area: 'hakata' },
+    { id: 'shrine', start: '13:10', end: '13:35', title: '구시다 신사 · 가와바타', subtitle: '점심 뒤 짧게 · 마켓 시간을 우선하는 선택 일정', status: 'option', place: '櫛田神社 福岡', area: 'kushida' },
+    { id: 'lunch', start: '12:15', end: '13:05', title: '점심 · 우동집 선택 중', subtitle: '카로노우론·다이치·가마키리 비교 · 미확정', status: 'plan', area: 'kushida', candidates: ['daichi', 'karo', 'kamakiri', 'genki', 'hirao', 'uochu', 'issou', 'umeyama', 'wakaba', 'kubocurry', 'gyozalee'], meal: 'lunch', detail: '일요일 점심은 우동을 먹고 싶다는 선호를 반영했으며 식당은 아직 미확정입니다. 우동 타이라와 하가쿠레는 일요일 휴무라 이날 후보에서 제외했어요. 다이치를 고르면 하카타역 근처 점심을 먼저 먹고 구시다 신사로 이동하는 순서가 편합니다.', fallback: ['우동집 대기·품절 시', '구시다 신사 근처면 카로노우론, 하카타역 근처면 다이치 우동 지하점, 텐진·다이묘로 넘어간 경우면 가마키리 우동의 줄을 비교해요. 가까운 곳부터 보되 무리한 왕복은 피합니다.'] },
+    { id: 'canal', start: '13:35', end: '14:15', title: '캐널시티 짧게 둘러보기', subtitle: '선택 방문 · 14:30 호텔 휴식 목표', status: 'option', place: 'キャナルシティ博多', area: 'kushida', links: [['캐널시티 공식', 'https://canalcity.co.jp/']] },
+    { id: 'hakata-hotel', start: '14:30', end: '15:30', title: '포르자 하카타구치 체크인 · 휴식', subtitle: '아고다 예약 확정 · 마켓 전 1시간 휴식', status: 'confirmed', booking: true, place: forza, area: 'hakata', links: [forzaOfficial, ['아고다 내 예약', 'https://www.agoda.com/account/bookings.html']], detail: '12/6~12/7 성인 2명·1박 예약이 확정됐어요. 체크인은 14:00부터, 체크아웃은 다음 날 11:00까지입니다. 마켓 관람 시간을 확보하려고 14:30 호텔 도착·15:30까지 휴식하는 계획으로 조정했어요. 예약 확정서와 결제·취소 조건은 아래 예약 정보와 관련 메일에서 확인하세요.' },
+    { id: 'snack', start: '15:30', end: '15:45', title: '마켓·저녁 외출 준비', subtitle: '예약 화면·교통카드 준비 · 간식은 소량만', status: 'plan', area: 'hakata', place: forza, detail: '호텔에서 예약 화면과 교통카드를 챙긴 뒤 하카타역 광장으로 나갑니다. 마코 코스 전 간식은 소량만 먹고, 다른 빵집으로 우회하지 않아요.' },
+    { id: 'market-before', start: '15:45', end: '17:05', title: '하카타역 크리스마스마켓', subtitle: '오늘의 메인 · 저녁 예약 전 여유 있게 구경', status: 'plan', place: '博多駅前広場', area: 'hakata', links: [['하카타역 행사 공식', 'https://christmas-advent.jp/fukuoka-hakata/']], detail: '하카타에서는 크리스마스마켓 관람이 메인입니다. 일요일은 12:00~23:00 운영하며 마지막 주문은 22:45입니다. 15:45부터 저녁 전까지 구경하고, 17:05에는 지하철로 마코에 출발해요. 밤 조명은 식사 후 다시 봅니다.' },
+    { id: 'mako-transit', start: '17:05', end: '17:50', title: '하카타역 마켓 → 마코 · 지하철', subtitle: '나나쿠마선 하시모토 방면 · 야쿠인오도리 하차', status: 'plan', deadline: '17:05 마켓 출발 · 호텔 직행 시 17:15', area: 'tenjin', place: mako, detail: '기본은 마켓을 구경하다 17:05 하카타역 광장에서 출발하는 동선입니다. 마켓을 건너뛰고 호텔에서 바로 가면 17:15 포르자 출발을 목표로 해요. 하카타역에서 薬院(야쿠인)보다 한 정거장 더 가서 薬院大通(야쿠인오도리)에 내립니다. 대기·역내 이동에 여유를 둔 계획이며 특정 열차의 출발 시각을 확정한 것은 아닙니다.', fallback: ['지연되거나 길을 찾기 어려울 때', '예약은 18:00 동시 시작입니다. 17:50까지 도착하기 어려울 것 같으면 마코 092-214-7053으로 바로 연락해요. TableCheck 안내상 15분 이상 연락 없이 늦으면 취소 처리될 수 있습니다.'] },
+    { id: 'mako-ready', start: '17:50', end: '18:00', title: '마코 도착 · 예약 확인', subtitle: '건물 2층 · 10분 먼저 도착 목표', status: 'plan', deadline: '18:00 식사 시작', area: 'tenjin', place: mako, links: [makoBooking], detail: '예약 확정 화면·메일을 준비하고 예약자 이름을 보여줘요. 주소는 薬院2-14-18 YAKUIN KZ LIFE BLD. 2F입니다. 전화번호는 092-214-7053입니다.' },
+    { id: 'dinner', start: '18:00', end: '20:30', title: '마코 · 야키토리 오마카세', subtitle: '12/6 일요일 18:00 예약 완료 · 예약자 확인', status: 'confirmed', fixed: true, food: 'mako', area: 'tenjin', place: mako, links: [makoBooking], detail: '11/12 예약자가 일요일 18:00 예약 완료를 확인했어요. 예약 확정 메일 원문은 아직 확인하지 못했습니다. 종료 20:30은 매장 안내의 좌석 이용 2시간 30분을 반영한 계획 시각입니다. 공개 오마카세 요금은 1인 ¥8,800 + 서비스료 10%(¥9,680)이며 음료·마무리 식사는 별도예요. 실제 예약 인원·좌석·코스·취소 조건은 확정서 원문 확인이 필요합니다.' },
+    { id: 'mako-return', start: '20:30', end: '20:55', title: '마코 → 소후렌 · 지하철 이동', subtitle: '하카타 방면 · 구시다진자마에역에서 하차', status: 'plan', area: 'hakata', place: sofuren, detail: '마코 식사가 20:30쯤 끝나고 아직 배가 고프면 야식을 먹으러 갑니다. 야쿠인오도리역에서 나나쿠마선 하카타 방면을 타고 구시다진자마에역에서 내려 소후렌으로 걸어요. 야식은 예약한 식사가 아니므로 입장 가능 시간·식욕에 따라 건너뜁니다.' },
+    { id: 'night-food', start: '20:55', end: '21:25', title: '야식 · 소후렌 하카타 에키마에점', subtitle: '히타 야키소바 · 저장 완료 · 영업·식욕에 따라', status: 'option', food: 'sofuren', area: 'hakata', place: sofuren, deadline: '공식 21:30 마감 · 마지막 주문 확인', links: [['소후렌 하카타 에키마에 공식', 'https://www.sofuren.com/stores/hakata-ekimae']], detail: '일요일 야식으로 선택한 곳을 저장했어요. 공식 영업시간은 11:00~21:30, 목요일 휴무이며 공식 페이지에 마지막 주문 시간은 따로 없습니다. 20:55 도착을 목표로 하되 방문 전 입장·주문 가능 여부를 확인해요. 예약 없이 방문하는 선택 일정입니다.', fallback: ['마코가 늦어지거나 소후렌이 마감했을 때', '야식을 위해 마코 코스를 서둘러 끝내지 않아요. 소후렌을 건너뛰고 하카타역 마켓을 짧게 보거나 호텔로 돌아갑니다. 배가 고프면 호텔 근처 영업 중인 편의점에서 간단히 포장해요.'] },
+    { id: 'market', start: '21:35', end: '22:30', title: '하카타역 크리스마스마켓 · 야경', subtitle: '야식 생략 시 20:55부터 · 23:00까지 운영', status: 'plan', place: '博多駅前広場', area: 'hakata', links: [['하카타역 행사 공식', 'https://christmas-advent.jp/fukuoka-hakata/']], detail: '밤 마켓을 충분히 보는 일정입니다. 소후렌 야식을 먹으면 21:35쯤 광장으로 돌아오고, 야식을 건너뛰면 지하철로 하카타역까지 바로 와서 20:55쯤부터 구경할 수 있어요. 22:30쯤 호텔로 출발하되 피곤하면 일찍 쉬어도 됩니다. 일요일 23:00 마감·마지막 주문 22:45입니다.' },
+    { id: 'rest', start: '22:40', timeLabel: '22:40 전후', title: '포르자 복귀 · 휴식', status: 'plan', place: forza, area: 'hakata' },
   ],
   [
     { id: 'breakfast', start: '08:00', end: '09:00', title: '아침', status: 'plan', area: 'hakata', candidates: ['shiroya', 'hotel-breakfast'], meal: 'brunch' },
@@ -83,7 +91,10 @@ export const tasks = [
   { id: 'cafe-alt', event: 'shiba', title: '마메시바 카페 입장 시각 확인', info: '15:50쯤까지 입장 가능한 경우에만 방문' },
   { id: 'pickup', event: 'collect', title: '픽업 요청용 일본 동전 준비', info: '짐 회수 후 역 공중전화로 17:00까지 요청 · 안 되면 택시' },
   { id: 'hotel-payment', event: 'hakata-hotel', title: '12/1 포르자 자동 결제 확인', info: '숙소 예약 확정 · USD 157.34 기준, 결제일 환율·5% 조정 및 현지 숙박세 별도 확인' },
-  { id: 'eel', event: 'dinner', title: '요시즈카 우나기야 예약 가능 여부 확인', info: '12/6 일요일 저녁 2인' },
+  { id: 'mako-mail', event: 'dinner', title: '마코 예약 확정 메일 확인', info: '12/6 일요일 18:00 예약 완료 · 확정서의 인원·좌석·코스 조건은 원문 확인 대기' },
+  { id: 'choose-yufuin-snack', event: 'shopping', title: '토요일 유후인 간식 고르기', info: '마메시바 입장과 짐 회수에 여유가 있을 때 먹을 한두 곳' },
+  { id: 'choose-udon', event: 'lunch', title: '일요일 점심 우동집 고르기', info: '카로노우론·다이치·가마키리 비교 · 타이라·하가쿠레는 일요일 휴무' },
+  { id: 'sofuren-order', event: 'night-food', title: '소후렌 마지막 주문 시간 확인', info: '야식 장소 저장 완료 · 공식 21:30 마감, 마지막 주문은 미공개' },
   { id: 'airport', event: 'airport-return', title: '귀국일 공항 이동수단 정하기', info: '후쿠오카공항 국제선 터미널' },
 ];
 
@@ -117,11 +128,20 @@ export const foods = {
   milch: { name: '유후인 밀히 본점', jp: '由布院ミルヒ本店 大分県由布市湯布院町川上3015-1', area: 'yufuin', menu: '갓 구운 케제쿠헨 치즈케이크', hours: '10:30~17:30', photo: 'snacks', info: '유후인 우유로 만든 작은 치즈케이크예요. 한 가지 고른다면 따뜻한 케제쿠헨을 추천해요. 카페 입장과 짐 회수에 여유가 있을 때 들릅니다.', official: 'https://www.milch-japan.co.jp/shops/', checked },
   korokke: { name: '금상 고로케 2호점', jp: '金賞コロッケ 2号店 大分県由布市湯布院町川上1079-8', area: 'yufuin', menu: '갓 튀긴 금상 고로케', hours: '09:00 개점 · 겨울 마감 확인', photo: 'snacks', info: '달지 않은 간식을 원할 때. 2호점은 유노츠보 거리변에 있어요. 주문 후 튀겨주는 가게라 줄이 길면 지나가고, 영업시간은 당일 확인하세요.', official: 'https://yunotubo.com/map/', checked },
   purindora: { name: '하나코지 키쿠야', jp: '御菓子司 花麹菊家 大分県由布市湯布院町川上1524-1', area: 'yufuin', menu: '푸딩을 넣은 도라야키 · 푸린도라', hours: '10:00~17:00', photo: 'snacks', info: '유노츠보 요코초 입구의 과자점이에요. 푸린도라를 포장하고, 밤에 먹을 거라면 제품의 냉장·섭취 안내를 확인하세요.', official: 'https://www.yufuin.org/', checked },
+  mako: {
+    name: '야키토리 마코 · 예약 완료', jp: mako, area: 'tenjin', menu: '일품요리와 부위별 닭꼬치 오마카세', photo: 'food-mako', meals: ['dinner'],
+    hours: '12/6 일 18:00 예약 완료 · 좌석 이용 2시간 30분', rating: 3.91, reviewCount: 225, added: true, checked: '2026.11.12',
+    budget: '공개 코스 1인 ¥8,800 + 서비스료 10% = ¥9,680 · 음료·마무리 식사 별도',
+    info: '12/6 일요일 18:00 예약 완료를 예약자가 확인했어요. 메일 원문은 확인 대기입니다. 현재 코스의 고정 세부 메뉴는 공개되지 않았으며, 취재 사례에는 닭 수프·타타키·부위별 꼬치·채소꼬치가 나옵니다. 공개 예약 안내의 취소료는 당일·전날 100%, 3일 이내 50%이며 실제 예약 조건은 확정서를 우선해요.',
+    reviewNote: '2026 야키토리 WEST 백명점. 흑사츠마닭·고쇼닭·어린 닭을 부위별로 사용하고, 일품요리와 꼬치를 순서대로 제공하는 코스형 식당입니다. 메뉴는 방문일 수급에 따라 달라져요.',
+    route: '기본은 17:05 하카타역 마켓 출발(호텔 직행 시 17:15 포르자 출발) → 나나쿠마선 하시모토 방면 → 5정거장 뒤 야쿠인오도리역 → 1번 출구에서 도보 약 3분. 17:45~17:50 도착 목표. 가는 편 1인 ¥260. 소후렌을 들를 때는 복귀 시 구시다진자마에역에서 내려요.',
+    award: ['야키토리 WEST 2026', `${awards}yakitori_west/2026/`], tabelog: 'https://tabelog.com/fukuoka/A4001/A400104/40059074/', official: 'https://www.tablecheck.com/ja/yakitori-mako', booking: 'https://www.tablecheck.com/ko/shops/yakitori-mako/reserve', evidenceLinks: [['메뉴 구성·현지 취재', 'https://rkb.jp/contents/202608/204338/']],
+  },
   taka: {
     name: '야키토리 타카', jp: '焼き鳥 貴 福岡市中央区高砂2-13-7 ミカミビル1F', area: 'tenjin', menu: '오마카세 닭꼬치 · 숯불구이', meals: ['dinner'],
     hours: '일 18:00~23:00 · 부정기 휴무 · 재료 소진 시 종료', rating: 3.73, reviewCount: 285, added: true, checked: foodChecked,
     budget: '후기 기준 1인 ¥10,000~14,999 전후 · 서비스료 5% 별도',
-    info: '이번 추가 후보 중 점수가 가장 높은 예약형 야키토리. 12석 규모라 현장 대기 대안보다 미리 자리를 확인할 특별식 후보예요. 일요일 정기 휴무는 아니지만 12/6 영업·잔여석은 별도 확인합니다.',
+    info: '평가가 좋은 예약형 야키토리 후보. 12석 규모라 현장 대기 대안보다 미리 자리를 확인할 특별식 후보예요. 이번 저녁은 마코 예약으로 확정했으며, 타카는 비교용 후보로 남겨둡니다.',
     reviewNote: '일본어 재방문 후기에서 숯 향·타레·야채의 익힘과 응대를 좋게 평가했어요. 2026년 후기에는 순서대로 나오는 오마카세 구이의 만족도가 보입니다. 평가가 높아도 예약과 이동 부담은 있어요.',
     route: '야쿠인보다 남쪽인 다카사고. 하카타·나카스 기본 동선에서 벗어나므로 이곳을 고르면 저녁 목적지 자체를 바꾸고 식사 시간을 넉넉히 잡아요.',
     award: ['야키토리 WEST 2026', `${awards}yakitori_west/2026/`], tabelog: 'https://tabelog.com/fukuoka/A4001/A400104/40033935/', official: 'https://yakitori-taka-fukuoka.studio.site/',
@@ -190,16 +210,50 @@ export const foods = {
     route: '캐널시티 이스트빌딩 쪽·하카타역 하카타구치에서 공식 도보 약 8분. 저녁을 먹은 뒤 하카타역 광장으로 돌아오기 편해요.',
     tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40044969/', official: 'https://mizutaki-hamadaya.jp/honten/',
   },
+  sofuren: {
+    name: '소후렌 하카타 에키마에점', jp: sofuren, area: 'hakata', menu: '히타 야키소바 · 바삭하게 구운 면', photo: 'food-sofuren', checked: '2026.11.12',
+    hours: '공식 11:00~21:30 · 목요일 휴무 · 마지막 주문 미공개',
+    info: '일요일 야식으로 저장한 식당입니다. 마코 식사 후 구시다진자마에역에서 내려 도보 약 3~4분. 20:55 도착을 목표로 하되 입장·주문 가능 여부를 먼저 확인해요. 공식 홈페이지는 21:30 마감, 일부 예약 사이트는 22:00 마감·21:30 마지막 주문으로 달라 늦은 시간을 보장하지 않습니다. 하카타역에키마에 지점이며 다른 지점과 구분해요.',
+    tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40065140/', official: 'https://www.sofuren.com/stores/hakata-ekimae',
+  },
+  daichi: {
+    name: '다이치 우동 하카타역 지하점', jp: '大地のうどん 博多駅ちかてん 福岡市博多区博多駅前2-1-1 福岡朝日ビルB2F', area: 'hakata', menu: '큰 우엉튀김 우동 · 고기우엉 우동', photo: 'food-daichi', meals: ['lunch'], rating: 3.56, reviewCount: 2212, added: true, checked: '2026.11.12',
+    hours: '공식 10:30~16:00 / 17:00~21:00 · 연말연시 외 무휴', budget: '후기 기준 1인 ¥1,000 미만 중심 · 실제 메뉴 가격 확인',
+    info: '일요일 우동 점심의 새 후보입니다. 포르자와 같은 하카타구치 쪽 아사히빌딩 지하 2층. 예약 불가·현금 식권 기준이며 줄이 생길 수 있어요. 타베로그의 개점 10:00 표기와 공식 10:30 표기가 달라 공식 시간을 기준으로 넣었습니다. 백명점 표시는 지점별로 구분하며 이 지점에는 붙이지 않았어요.',
+    reviewNote: '2,200명 이상의 후기가 있는 하카타역 근처 인기점. 큰 우엉튀김과 면의 조합을 소개하는 일본어 후기가 많고, 포르자에서 먼 곳으로 이동하지 않아도 되는 점이 장점이에요.',
+    route: '다이치를 고르면 하카타역 근처에서 점심을 먼저 먹고 구시다 신사·캐널시티로 이동하는 순서가 편해요. 점심 식당은 아직 미확정이며 하카타역 마켓 관람이 메인인 일정입니다.',
+    tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40035066/', official: 'https://daichinoudon.pro/?p=15',
+  },
+  taira: {
+    name: '우동 타이라 · 일요일 휴무', jp: 'うどん平 福岡市博多区住吉5-10-7 第3住吉ハイツ1F', area: 'hakata', menu: '고기우엉 우동 · 부드럽고 쫄깃한 자가제면', checked: '2026.11.12',
+    hours: '월~토 11:00~15:00 · 주문 마감 14:30 · 일·공휴일 휴무',
+    info: '타베로그 3.69·후기 975명, 우동 WEST 백명점 2024에 선정된 유명점입니다. 일요일 휴무라 12/6 점심 후보에서는 제외했어요. 12/7은 11시 개점이 공항 이동 뒤라 이번 여행에 무리해서 넣지 않습니다. 비교·다음 여행 참고용으로 남겨둬요.',
+    award: udon, tabelog: 'https://tabelog.com/fukuoka/A4001/A400101/40052349/',
+  },
   'hotel-breakfast': { name: '호텔 조식', menu: '숙소 확정 후 선택', info: '조식 포함 여부와 공항 이동 전 이용 가능 시간을 확인하세요.' },
 };
 
 export const foodGenres = {
-  noodles: { label: '우동·라멘', ids: ['karo', 'issou', 'hagakure', 'genki', 'kamakiri'] },
+  noodles: { label: '우동·라멘·야키소바', ids: ['karo', 'daichi', 'taira', 'issou', 'hagakure', 'genki', 'kamakiri', 'sofuren'] },
   rice: { label: '정식·덮밥', ids: ['yoshizuka', 'yamamichi', 'hirao', 'uochu', 'umeyama', 'wakaba'] },
   hotpot: { label: '전골', ids: ['yamanaka', 'toriden', 'hamadaya', 'ichifuji'] },
-  skewers: { label: '야키토리', ids: ['taka'] },
+  skewers: { label: '야키토리', ids: ['mako', 'taka'] },
   dumplings: { label: '교자·중식', ids: ['hountei', 'gyozalee'] },
   curry: { label: '카레', ids: ['kubocurry'] },
   bread: { label: '빵', ids: ['dacomecca', 'painstock', 'shiroya', 'fullfull'] },
   snacks: { label: '간식·카페', ids: ['16ku', 'suzukake', 'tenjosajiki', 'bspeak', 'milch', 'korokke', 'purindora'] },
 };
+
+export const savedPlaces = [
+  { name: '야도야 오오하시', kind: '숙소', status: 'confirmed', label: '숙박 예약 확정', event: 'ryokan', place: ryokan, mode: 'driving', icon: 'hotel', when: '12/5 토 → 12/6 일', note: '17:00~17:10 도착 목표 · 17:30 체크인 마감. 역 픽업이 기본입니다.' },
+  { name: '포르자 하카타구치', kind: '숙소', status: 'confirmed', label: '숙박 예약 확정', event: 'hakata-hotel', place: forza, mode: 'walking', icon: 'hotel', when: '12/6 일 → 12/7 월', note: '하카타역 서쪽 하카타구치 지점. 지쿠시구치 지점과 구분해요.' },
+  { name: '야키토리 마코', kind: '식당', status: 'confirmed', label: '18:00 예약 완료', event: 'dinner', place: mako, mode: 'transit', icon: 'food', when: '12/6 일 18:00', note: '17:05 마켓 출발 · 호텔 직행 시 17:15. 야쿠인오도리역 1번 출구. 예약자 확인 기준이며 메일 원문은 대기 중입니다.' },
+  { name: '소후렌 하카타 에키마에점', kind: '식당', status: 'plan', label: '야식 저장 완료 · 미예약', event: 'night-food', place: sofuren, mode: 'walking', icon: 'bowl', when: '12/6 일 20:55 도착 목표 · 선택 방문', note: '공식 21:30 마감. 마코 뒤 구시다진자마에역 하차 · 마지막 주문 확인이 필요해요.' },
+  { name: '하카타역 크리스마스마켓', kind: '메인 관광', status: 'plan', label: '일요일 메인 · 입장 무료', event: 'market-before', place: '博多駅前広場', mode: 'walking', icon: 'sparkle', when: '12/6 일 15:45~17:05 · 식사 후 야경', note: '일요일 12:00~23:00, 마지막 주문 22:45. 마켓을 두 차례 보고 포르자로 걸어 돌아와요.' },
+];
+
+export const foodDecisions = [
+  { event: 'shopping', title: '토요일 유후인 간식', label: '선택 중', status: 'todo', note: '마메시바·짐 회수 시간에 맞춰 한두 곳 고르기' },
+  { event: 'lunch', title: '일요일 점심 · 우동', label: '선택 중', status: 'todo', note: '카로노우론·다이치·가마키리 비교 · 타이라는 일요일 휴무' },
+  { event: 'night-food', title: '일요일 야식 · 소후렌', label: '저장 완료', status: 'plan', note: '마코 식사 종료·입장 가능 시간에 따라 방문' },
+];

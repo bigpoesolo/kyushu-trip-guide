@@ -1,6 +1,6 @@
-import { areas, checkinFirst, days, foodGenres, foods, schedules, statuses, tasks } from './trip.js?v=9';
-import { eventPhotos, guides, photos } from './guides.js?v=9';
-import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=9';
+import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=10';
+import { eventPhotos, guides, photos } from './guides.js?v=10';
+import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=10';
 
 const view = document.querySelector('#view');
 const dialog = document.querySelector('#detail');
@@ -31,8 +31,8 @@ const icon = name => `<svg class="icon" aria-hidden="true"><use href="#${name}"/
 const mark = name => `<span class="mark mark-${name}">${icon(name)}</span>`;
 const badge = (label, className = '') => `<span class="tag ${className}">${escape(label)}</span>`;
 const link = (label, url) => `<a class="button" href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(label)} ${icon('external')}</a>`;
-const mapLink = place => link('지도', `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`);
-const directionsLink = (origin, destination, mode = 'walking', label = mode === 'walking' ? '도보 길찾기' : '차량 경로') => link(label,
+const mapLink = (place, label = '지도') => link(label, `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`);
+const directionsLink = (origin, destination, mode = 'walking', label = mode === 'walking' ? '도보 길찾기' : mode === 'transit' ? '대중교통 길찾기' : '차량 경로') => link(label,
   `https://www.google.com/maps/dir/?${new URLSearchParams({ api: '1', origin, destination, travelmode: mode })}`);
 const action = (label, name, id, extraClass = '', symbol = '') => `<button type="button" class="button ${extraClass}" data-action="${name}" data-id="${escape(id)}">${symbol ? icon(symbol) : ''}${escape(label)}</button>`;
 const timeText = event => event.timeLabel || [event.start, event.end].filter(Boolean).join('–');
@@ -41,13 +41,13 @@ const eventIcons = {
   'flight-out': 'plane', arrival: 'bag', platform: 'walk', 'bus-out': 'bus', bags: 'bag', 'walk-cafe': 'walk', shiba: 'coffee',
   shopping: 'shop', 'walk-back': 'walk', collect: 'bag', 'ryokan-ride': 'car', ryokan: 'hotel', sukiyaki: 'food', bath: 'bath', 'late-snack': 'food',
   early: 'hotel', 'taxi-am': 'car', 'bus-ready': 'bus', 'bus-back': 'bus', 'hakata-bags': 'bag', brunch: 'bread', shrine: 'pin',
-  lunch: 'food', canal: 'shop', 'hakata-hotel': 'hotel', snack: 'coffee', dinner: 'food', market: 'sparkle', rest: 'hotel',
+  lunch: 'food', canal: 'shop', 'hakata-hotel': 'hotel', snack: 'coffee', 'market-before': 'sparkle', 'mako-transit': 'route', 'mako-ready': 'pin', dinner: 'food', 'mako-return': 'route', 'night-food': 'bowl', market: 'sparkle', rest: 'hotel',
   breakfast: 'bread', checkout: 'bag', 'airport-return': 'car', 'airport-arrival': 'pin', depart: 'bag', 'flight-back': 'plane',
 };
 const foodIcons = {
   dacomecca: 'bread', karo: 'bowl', painstock: 'bread', uochu: 'bowl', yamanaka: 'bowl', issou: 'bowl', '16ku': 'coffee',
   shiroya: 'bread', hagakure: 'bowl', genki: 'bowl', fullfull: 'bread', suzukake: 'coffee', tenjosajiki: 'coffee', bspeak: 'coffee', milch: 'coffee', purindora: 'coffee',
-  taka: 'food', kamakiri: 'bowl', umeyama: 'food', toriden: 'bowl', wakaba: 'food', gyozalee: 'food', ichifuji: 'bowl', kubocurry: 'bowl', hamadaya: 'bowl',
+  mako: 'food', sofuren: 'bowl', daichi: 'bowl', taira: 'bowl', taka: 'food', kamakiri: 'bowl', umeyama: 'food', toriden: 'bowl', wakaba: 'food', gyozalee: 'food', ichifuji: 'bowl', kubocurry: 'bowl', hamadaya: 'bowl',
 };
 
 function notify(message) {
@@ -77,6 +77,10 @@ function currentEvent(id) {
   const base = events[id];
   const edits = saved.events[id] || {};
   const event = { ...base, ...edits };
+  if (!base.candidates) delete event.selected;
+  if (base.fixed) {
+    Object.assign(event, { start: base.start, end: base.end, timeLabel: base.timeLabel, status: base.status });
+  }
   if (base.booking) event.status = base.status;
   if (base.candidates) {
     event.candidates = [...new Set([...base.candidates, ...(edits.added || [])])];
@@ -104,6 +108,7 @@ function renderSchedule() {
       <div class="toolbar">
         ${day === 0 ? `${action('유후인 거리 간식', 'event', 'shopping', '', 'coffee')}${action('료칸 야식 준비', 'event', 'late-snack', '', 'food')}${action('체크인 먼저 대안', 'checkin-first', '', '', 'route')}` : ''}
         ${action(`${areas[info.area]} 주변 맛집`, 'nearby', info.area, '', 'pin')}
+        ${action('저장한 장소·구글맵', 'maps', '', '', 'pin')}
         ${action('예약·관련 메일', 'mailbox', '', '', 'mail')}
       </div>
     </aside>
@@ -122,14 +127,29 @@ function renderFood() {
   const listings = Object.entries(foods).filter(([id, food]) => food.area && (!area || food.area === area) && (!awardOnly || food.award) && (!genre || foodGenres[genre].ids.includes(id)))
     .sort(([, a], [, b]) => Number(Boolean(b.added)) - Number(Boolean(a.added)));
   return `${titleBlock('02 / FOOD GUIDE', '맛집과 예비 후보', '동선에 맞는 맛집을 식사 후보에 담아요.', 'food')}
+    ${renderFoodDecisions()}
     <div class="food-toolbar"><div class="toolbar" aria-label="지역 필터">${Object.entries({ '': '전체 지역', ...areas }).map(([id, label]) => `<button type="button" class="filter" data-action="area" data-id="${id}" aria-pressed="${area === id}">${label}</button>`).join('')}</div>
       <button type="button" class="filter award-filter" data-action="awards" aria-pressed="${awardOnly}">${icon('sparkle')}백명점만</button></div>
     <div class="menu-toolbar" role="group" aria-label="메뉴 종류"><button type="button" class="filter" data-action="genre" data-id="" aria-pressed="${!genre}">전체 메뉴</button>${Object.entries(foodGenres).map(([id, group]) => `<button type="button" class="filter" data-action="genre" data-id="${id}" aria-pressed="${genre === id}">${escape(group.label)} <span>${group.ids.length}</span></button>`).join('')}</div>
-    <p class="meta food-research-note">11/11 추가 조사 9곳은 점수·후기 수·예산·일요일 방문 참고를 담았어요. 일본어 후기와 지역 매체를 참고했으며 점수·잔여석은 달라질 수 있어요.</p>
+    <p class="meta food-research-note">11/11–12 추가 조사와 마코 저녁 예약을 반영했어요. 점수·후기 수·예산·일요일 방문 참고를 담았으며 점수와 영업 정보는 달라질 수 있어요.</p>
     <div class="list-heading"><strong>${area ? areas[area] : '전체 후보'}</strong><span>${listings.length}곳 · 백명점 ${listings.filter(([, food]) => food.award).length}곳</span></div>
     ${listings.length ? `<ul class="food-grid">${listings.map(([id, food]) => `<li><button type="button" class="food-card" data-action="food" data-id="${id}">
       ${mark(foodIcons[id] || 'food')}<span><span class="food-area">${escape(areas[food.area])}</span><strong>${escape(food.name)}</strong><span class="meta">${escape(food.menu)}</span>
       <span class="chips">${food.rating ? badge(`타베로그 ${food.rating.toFixed(2)}`, 'rating') : ''}${food.added ? badge('추가 조사', 'confirmed') : ''}${food.award ? badge(`백명점 · ${food.award[0]}`, 'award') : ''}${food.hours ? badge(food.hours) : ''}${food.wish ? badge('가고 싶은 곳', 'pending') : ''}</span></span>${icon('chevron')}</button></li>`).join('')}</ul>` : `<div class="empty">${mark('pin')}<p>조건에 맞는 후보가 없어요. 메뉴·지역을 바꾸거나 백명점 필터를 꺼보세요.</p></div>`}`;
+}
+
+function renderFoodDecisions() {
+  return `<section class="food-decisions" aria-label="식사 선택 현황"><div class="list-heading"><strong>남은 먹거리 선택</strong><span>유후인 간식·일요일 점심 선택 중</span></div>
+    <div class="decision-grid">${foodDecisions.map(item => `<button type="button" class="decision-card" data-action="event" data-id="${item.event}"><span class="chips">${badge(item.label, item.status)}</span><strong>${escape(item.title)}</strong><small>${escape(item.note)}</small><span class="decision-open">일정·후보 보기 ${icon('chevron')}</span></button>`).join('')}</div></section>`;
+}
+
+function renderMaps() {
+  return `${titleBlock('05 / SAVED PLACES', '우리 여행 장소', '숙소와 선택한 식당, 하카타 크리스마스마켓을 한곳에 모았어요.', 'pin')}
+    <div class="map-note"><span>${icon('pin')}</span><p>두 분이 함께 보는 앱의 장소 목록이에요. Google Maps 계정에도 저장하려면 <strong>장소 열기 → 저장</strong>을 눌러 원하는 목록에 담아주세요.</p></div>
+    <section class="map-route"><p class="eyebrow">SUNDAY · CHRISTMAS MARKET</p><h3>하카타역 광장을 중심으로</h3><p>우동 점심 → 포르자 휴식 → 마켓 → 마코 18:00 → 소후렌은 선택 → 마켓 야경</p><div class="links">${action('마켓에서 마코 가는 길', 'event', 'mako-transit', '', 'route')}${action('마코 뒤 야식 동선', 'event', 'mako-return', '', 'route')}</div></section>
+    <div class="list-heading"><strong>저장한 장소</strong><span>${savedPlaces.length}곳 · 숙소·예약 식당·선택 방문</span></div>
+    <div class="place-grid">${savedPlaces.map(item => `<article class="place-card"><div class="place-heading">${mark(item.icon)}<div><span class="food-area">${escape(item.kind)} · ${escape(item.when)}</span><h3>${escape(item.name)}</h3></div></div><div class="chips">${badge(item.label, item.status)}</div><p>${escape(item.note)}</p><p class="meta place-address">${escape(item.place)}</p><div class="links">${mapLink(item.place, 'Google Maps 장소 열기')}${link('현재 위치에서 길찾기', `https://www.google.com/maps/dir/?${new URLSearchParams({ api: '1', destination: item.place, travelmode: item.mode })}`)}${action('일정 상세', 'event', item.event, '', 'calendar')}</div></article>`).join('')}</div>
+    ${renderFoodDecisions()}`;
 }
 
 function renderTasks() {
@@ -153,7 +173,7 @@ function mailCards(list, fromEvent = '') {
 
 function renderMails() {
   return `${titleBlock('04 / RESERVATIONS & MAIL', '예약과 여행 메일', '확정서와 숙소 답장을 일정별로 모았어요.', 'mail')}
-    <div class="mail-note"><span>${icon('mail')}</span><p>요약은 <strong>${mailChecked} 확인한 내용</strong>이에요. 새 답장과 원문·첨부파일은 예약한 Gmail 계정에서 열어주세요.</p></div>
+    <div class="mail-note"><span>${icon('mail')}</span><p>마지막 갱신 <strong>${mailChecked}</strong>. 각 항목에 확인일과 출처를 표시했어요. 「메일 원문 대기」는 예약자 확인 기준이며, 원문·첨부파일은 예약한 Gmail 계정에서 열어주세요.</p></div>
     <div class="list-heading"><strong>관련 메일</strong><span>${travelMails.length}개 묶음</span></div>
     ${mailCards(travelMails)}`;
 }
@@ -182,7 +202,7 @@ function render() {
     if (button.dataset.tab === tab) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
   }
-  view.innerHTML = tab === 'schedule' ? renderSchedule() : tab === 'food' ? renderFood() : tab === 'mail' ? renderMails() : renderTasks();
+  view.innerHTML = tab === 'schedule' ? renderSchedule() : tab === 'maps' ? renderMaps() : tab === 'food' ? renderFood() : tab === 'mail' ? renderMails() : renderTasks();
 }
 
 function detailHeading(label, title, symbol) {
@@ -239,7 +259,7 @@ function showEvent(id, backTask) {
   const sources = [...(event.links || []), ...(guide.links || [])];
   const editing = `<details class="detail-section edit-section"><summary>${icon('edit')}일정 수정</summary>
     <form class="edit-grid" id="edit-event" data-id="${id}" data-back-task="${escape(backTask)}">
-      ${event.fixed ? '<p class="wide">예약된 교통편의 시간과 상태가 고정되어 있어요.</p>' : `<label>시작<input name="start" type="time" value="${event.start}" required></label><label>종료<input name="end" type="time" value="${event.end || ''}"></label>
+      ${event.fixed ? `<p class="wide">예약된 ${event.food ? '식사의 시작 시간과 상태가 고정되어 있어요. 종료는 매장 이용 시간에 따른 예상입니다.' : '교통편의 시간과 상태가 고정되어 있어요.'}</p>` : `<label>시작<input name="start" type="time" value="${event.start}" required></label><label>종료<input name="end" type="time" value="${event.end || ''}"></label>
       ${event.booking ? '<p class="wide meta">예약 확정서 기준 숙소예요. 방문 시간과 내 메모를 수정할 수 있어요.</p>' : `<label class="wide">${event.selected ? '현재 선택한 식당의 상태' : '상태'}<select name="status">${Object.entries(statuses).map(([key, label]) => `<option value="${key}"${event.status === key ? ' selected' : ''}>${label}</option>`).join('')}</select></label>`}`}
       <label class="wide">내 메모<textarea name="note" maxlength="600" placeholder="예약 정보나 바뀐 내용을 적어두세요.">${escape(event.note)}</textarea></label>
       <button class="button primary" type="submit">저장</button>
@@ -252,7 +272,7 @@ function showEvent(id, backTask) {
     ${event.booking ? bookingDetails() : ''}
     ${destination || guide.directions ? `<section class="detail-section"><h3>${icon('pin')}장소·가는 법</h3>
       ${guide.directions ? `<p>${escape(guide.directions)}</p>` : ''}${destination ? `<p class="meta">${escape(destination)}</p>` : ''}
-      <div class="links">${guide.origin && destination ? directionsLink(guide.origin, destination, guide.mode) : ''}${destination ? mapLink(destination) : ''}${sources.map(([label, url]) => link(label, url)).join('')}</div></section>` : ''}
+      <div class="links">${guide.origin && destination ? directionsLink(guide.origin, destination, guide.mode) : ''}${destination ? mapLink(destination) : ''}${event.food ? action('예약 식당 메뉴·사진', 'food', event.food, '', 'food') : ''}${sources.map(([label, url]) => link(label, url)).join('')}</div></section>` : ''}
     ${guideDetails(id, guide)}
     ${event.detail ? `<section class="detail-section"><h3>${icon('checklist')}현장 메모</h3><p>${escape(event.detail)}</p></section>` : ''}
     ${!destination && !guide.directions && sources.length ? `<section class="detail-section"><h3>${icon('external')}참고 링크</h3><div class="links">${sources.map(([label, url]) => link(label, url)).join('')}</div></section>` : ''}
@@ -319,6 +339,8 @@ document.addEventListener('click', event => {
     case 'mail': { const [mailId, fromEvent] = id.split('|'); showMail(mailId, fromEvent); break; }
     case 'mailbox':
       tab = 'mail'; if (dialog.open) dialog.close(); render(); window.scrollTo(0, 0); break;
+    case 'maps':
+      tab = 'maps'; if (dialog.open) dialog.close(); render(); window.scrollTo(0, 0); break;
     case 'food': showFood(id); break;
     case 'task': showTask(id); break;
     case 'task-event': showEvent(tasks.find(task => task.id === id).event, id); break;

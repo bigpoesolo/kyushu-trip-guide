@@ -16,6 +16,14 @@ export const hotelBooking = {
 // Public summaries only. Reservation IDs, access keys and bearer links stay in Gmail.
 export const travelMails = [
   {
+    id: 'mako-booking', source: 'TableCheck · 예약자 확인', date: '2026.11.12 예약자 확인', status: 'confirmed', label: '예약 완료 · 메일 원문 대기', icon: 'food',
+    title: '마코 · 12/6 일요일 18:00 예약',
+    summary: '예약자가 일요일 18:00 예약 완료 확인 · 메일 원문은 아직 미확인',
+    query: 'from:tablecheck.com after:2026/11/11 before:2026/11/14 {"焼鳥まこ" "Yakitori Mako" "야키토리 마코"}',
+    notes: ['12/6 일요일 18:00 예약 완료 · 11/12 예약자 확인 기준', '메일 연결 오류로 확정서 원문을 아직 읽지 못했어요. 실제 예약 인원·좌석·코스·취소 조건은 Gmail 원문을 확인해야 합니다.', '17:05 하카타역 마켓 출발(호텔에서 직행 시 17:15 포르자 출발) → 나나쿠마선 하시모토 방면 → 야쿠인오도리역 1번 출구 → 도보 약 3분', '17:45~17:50 도착 목표 · 식당은 薬院2-14-18 YAKUIN KZ LIFE BLD. 2층', '공개 매장 안내: 코스 1인 ¥8,800 + 서비스료 10%(¥9,680). 음료·마무리 식사는 별도이며 실제 예약 조건은 확정서를 우선해요.', '20:30은 좌석 이용 2시간 30분을 반영한 종료 예상입니다. 소후렌 야식은 선택 방문으로 두고, 식사 후 하카타역 크리스마스마켓 야경을 봐요.'],
+    events: ['dinner', 'mako-transit', 'mako-ready', 'mako-return'],
+  },
+  {
     id: 'agoda-hotel', source: 'Agoda', date: '2026.11.11 22:52', status: 'confirmed', label: '예약 확정', icon: 'hotel',
     title: '포르자 하카타구치 예약 확정서',
     summary: '12/6–12/7 · 리프레시 더블 금연 · 성인 2명 · 1박',
@@ -49,5 +57,5 @@ export const travelMails = [
   },
 ];
 
-export const mailChecked = '2026.11.11';
+export const mailChecked = '2026.11.12';
 export const gmailSearch = query => `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(query)}`;

@@ -133,6 +133,26 @@ h1 span { color: #e6b478; padding-inline: .13em; }
 .menu-toolbar .filter { font-size: .75rem; }
 .menu-toolbar .filter > span { opacity: .65; font-size: .7rem; }
 .food-research-note { margin: 0 0 18px; }
+.food-decisions { margin: 18px 0 22px; }
+.decision-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.decision-card { display: grid; align-content: start; gap: 8px; padding: 15px; min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-align: left; }
+.decision-card strong { color: var(--forest); font-size: .93rem; }
+.decision-card small { color: var(--muted); font-size: .77rem; line-height: 1.5; }
+.decision-open { display: flex; align-items: center; gap: 4px; color: var(--rust); font-size: .75rem; font-weight: 700; }
+.decision-open svg { width: 14px; height: 14px; }
+.map-note { display: flex; align-items: start; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: #f0f3e9; margin-bottom: 15px; }
+.map-note > span svg { width: 20px; height: 20px; color: var(--forest); }
+.map-note p { margin: 0; color: var(--muted); font-size: .82rem; line-height: 1.6; }
+.map-route { margin-bottom: 22px; padding: 18px; border: 1px solid #d9c5a6; border-radius: 14px; background: #f7ecd9; }
+.map-route h3 { margin: 7px 0; color: var(--forest); font-size: 1.1rem; }
+.map-route > p:not(.eyebrow) { margin: 0 0 13px; color: #6c583e; font-size: .84rem; line-height: 1.7; }
+.place-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.place-card { display: flex; flex-direction: column; gap: 11px; padding: 18px; min-width: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.place-heading { display: flex; align-items: center; gap: 11px; }
+.place-heading h3 { margin: 0; color: var(--forest); font-size: 1.02rem; line-height: 1.4; }
+.place-card > p { margin: 0; font-size: .83rem; line-height: 1.65; overflow-wrap: anywhere; }
+.place-card .place-address { margin-bottom: 3px; font-size: .74rem; }
+.place-card .links { margin-top: auto; }
 .tag.rating { background: #eee3d2; color: #69432d; }
 .food-evidence { padding: 13px; border: 1px solid #e5d6bf; border-radius: 12px; background: #fbf2e3; }
 .food-score { display: flex; gap: 12px; align-items: center; margin: 10px 0; color: var(--forest); }
@@ -248,8 +268,9 @@ textarea { min-height: 68px; resize: vertical; }
   .brand-icon { width: 33px; height: 33px; border-radius: 10px; }
   .brand-icon svg { width: 20px; height: 20px; }
   .edition { font-size: .55rem; }
-  .nav { position: fixed; z-index: 4; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 6px 14px calc(6px + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-radius: 0; background: var(--surface); box-shadow: 0 -5px 25px #342d2210; }
-  .nav button { min-height: 51px; padding: 5px 3px; gap: 4px; font-size: .76rem; }
+  .nav { position: fixed; z-index: 4; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-radius: 0; background: var(--surface); box-shadow: 0 -5px 25px #342d2210; }
+  .nav button { position: relative; flex-direction: column; min-height: 51px; padding: 5px 2px; gap: 4px; font-size: .69rem; }
+  .nav .count { position: absolute; top: 2px; right: 4px; }
   .nav button > svg { width: 17px; height: 17px; }
   .hero { min-height: clamp(200px, 55vw, 280px); padding: 20px; border-radius: 17px; }
   .hero::after { background: linear-gradient(90deg, #18231a57 0%, transparent 80%), linear-gradient(0deg, #17231be0 0%, #17231b16 85%); }
@@ -290,6 +311,7 @@ textarea { min-height: 68px; resize: vertical; }
   .notice { bottom: calc(70px + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 540px) {
+  .place-grid, .decision-grid { grid-template-columns: 1fr; }
   .food-grid { grid-template-columns: 1fr; }
   dialog { width: 100%; max-width: none; max-height: 92dvh; margin: auto auto 0; padding-bottom: env(safe-area-inset-bottom); border-radius: 17px 17px 0 0; }
   #detail-content { padding-inline: 15px; }
