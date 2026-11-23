@@ -1,0 +1,110 @@
+.budget-page, .food-grid, .place-grid { min-width: 0; }
+.budget-page .budget-days { gap: 6px; margin: 0 0 12px; padding: 4px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+.budget-day { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; padding: 8px; border: 0; background: transparent; }
+.budget-day b { font-size: .98rem; }
+.budget-day span { font-size: .83rem; font-weight: 500; }
+.budget-page .budget-hero { border: 0; border-radius: 16px; padding: clamp(19px, 3.4vw, 34px); background: var(--forest-deep); }
+.budget-hero .budget-kicker { color: #f0d4a5; font-size: .88rem; }
+.budget-hero h3 { margin: 8px 0 3px; color: #fffaf1; font-size: 1.05rem; font-weight: 600; }
+.budget-page .budget-total { color: #fffaf1; font: 600 clamp(1.7rem, 5vw, 2.8rem)/1.2 var(--serif); font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.045em; }
+.budget-hero > p:last-of-type { color: #dbe4db; font-size: .9rem; }
+.daily-split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0 0; padding-top: 14px; border-top: 1px solid #ffffff40; }
+.daily-split dt { color: #dbe5d9; font-size: .86rem; }
+.daily-split dd { margin: 5px 0 0; color: white; font-size: 1.1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.budget-columns { display: grid; gap: 18px; margin-top: 16px; }
+.trip-account, .ledger-group, .food-decisions, .map-route { min-width: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.trip-account > summary, .ledger-group > summary, .food-decisions > summary, .map-route > summary, .place-more > summary { display: flex; align-items: center; gap: 9px; min-height: 48px; padding: 12px 15px; cursor: pointer; list-style: none; }
+:is(.trip-account, .ledger-group, .food-decisions, .map-route, .place-more) > summary::-webkit-details-marker { display: none; }
+:is(.trip-account, .ledger-group, .food-decisions, .map-route, .place-more) > summary::after { content: ''; width: 8px; height: 8px; margin: -4px 2px 0 1px; flex: 0 0 8px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(45deg); }
+:is(.trip-account, .ledger-group, .food-decisions, .map-route, .place-more)[open] > summary::after { transform: rotate(225deg); margin-top: 4px; }
+.trip-account > summary { justify-content: space-between; padding: 17px 18px; color: var(--forest); font-size: .9rem; }
+.trip-account > summary strong, .trip-account > summary small { display: block; }
+.trip-account > summary strong { margin: 3px 0; font-size: clamp(1.2rem, 3.4vw, 1.5rem); font-variant-numeric: tabular-nums; }
+.trip-account > summary small { color: var(--muted); font-size: .82rem; }
+.account-body { padding: 2px 16px 14px; border-top: 1px solid var(--line); }
+.account-body h3, .day-account h3 { margin: 17px 0 10px; color: var(--ink); font-size: 1.13rem; }
+.day-account h3 { margin-top: 0; }
+.account-body > p { margin: 8px 0 18px; }
+.account-body .budget-note { font-size: .9rem; line-height: 1.6; }
+.account-body .budget-table { table-layout: auto; font-size: .91rem; }
+.account-body .budget-table :is(td, th) { padding: 9px 5px; overflow-wrap: break-word; }
+.account-body .budget-table :is(td, th):last-child { text-align: right; }
+.account-body .budget-table tfoot { border-block: 1px solid var(--line); color: var(--forest); font-weight: 700; }
+.day-account { min-width: 0; }
+.ledger-group + .ledger-group { margin-top: 7px; }
+.ledger-group > summary { color: var(--forest); }
+.ledger-group > summary > span, .food-decisions > summary > span { margin-left: auto; color: var(--muted); font-size: .83rem; }
+.ledger-group ul { list-style: none; padding: 0 15px; margin: 0; }
+.ledger-group li { border-top: 1px solid var(--line); }
+.ledger-action { width: 100%; min-height: 55px; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; text-align: start; background: transparent; border: 0; }
+.ledger-action b, .ledger-action small { display: block; }
+.ledger-action b { margin-top: 2px; font-size: 1rem; font-weight: 650; }
+.ledger-action > strong { font-size: .96rem; font-variant-numeric: tabular-nums; text-align: right; }
+.cost-state { font-size: .8rem; color: var(--muted); }
+.state-fixed, .state-paid { color: var(--forest); }
+.state-option, .state-unknown { color: var(--rust); }
+
+.food-decisions { margin: 10px 0 15px; }
+.food-decisions > summary { color: var(--forest); }
+.food-decisions .decision-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; padding: 0 12px 10px; overflow: visible; }
+.food-decisions .decision-card { gap: 2px; padding: 9px; border-radius: 0; border: 0; background: transparent; }
+.food-decisions .decision-card strong { display: block; margin-top: 4px; font-size: 1rem; }
+.food-decisions .decision-card small { display: block; font-size: .85rem; }
+.food-decisions .tag { font-size: .76rem; }
+.scope-tabs { max-width: 33rem; margin-bottom: 9px; background: var(--sage); border-color: transparent; }
+.scope-tabs button { font-size: .94rem; }
+.search-field { margin-bottom: 5px; border-radius: 10px; }
+.food-search-symbol { position: relative; width: 15px; height: 15px; margin-right: 3px; border: 1.8px solid currentColor; border-radius: 50%; }
+.food-search-symbol::after { content: ''; width: 7px; border-top: 2px solid currentColor; position: absolute; right: -5px; bottom: -2px; transform: rotate(45deg); }
+.search-field input { min-height: 44px; font-size: 1rem; }
+.food-filters { border-top: 0; }
+.food-filters > summary { font-size: .9rem; }
+.food-filters .toolbar { flex-wrap: wrap; gap: 5px; }
+.food-filters .filter { min-height: 44px; font-size: .88rem; }
+.food-result-title strong { font-size: 1.08rem; }
+.food-result-title span { font-size: .87rem; }
+.food-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 9px; }
+.food-grid .food-card { grid-template-columns: clamp(66px, 19.5vw, 92px) minmax(0, 1fr); gap: 12px; padding: 11px; align-items: center; }
+.food-card .food-thumb { width: 100%; height: auto; aspect-ratio: .9; border-radius: 8px; }
+.food-thumb small { font-size: .75rem; line-height: 1.35; }
+.food-card .food-info { min-width: 0; }
+.food-card .food-area, .place-card .food-area { margin: 0 0 3px; font-size: .8rem; line-height: 1.45; }
+.food-card strong { font-size: 1.06rem; }
+.food-card .meta { margin-top: 3px; font-size: .92rem; }
+.food-card .tag { padding: 3px 5px; font-size: .75rem; }
+.food-card .tag.rating { padding-inline: 0; color: var(--forest); background: transparent; }
+.food-card .chips { gap: 5px 8px; }
+
+.map-route { margin: 0 0 18px; padding: 0; background: var(--sage); }
+.map-route > summary { color: var(--forest); font-weight: 700; }
+.map-route > summary span { display: flex; align-items: center; gap: 8px; }
+.map-route > summary b { margin-left: auto; font-size: .86rem; }
+.map-route-body { padding: 0 14px 14px; }
+.map-route-body p { margin: 4px 0 12px; }
+.place-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); }
+.place-card { gap: 9px; padding: 16px; }
+.place-heading { align-items: flex-start; }
+.place-heading h3 { font-size: 1.13rem; }
+.place-card > p { font-size: 1rem; line-height: 1.55; }
+.place-card .chips .tag { font-size: .8rem; }
+.place-actions .button, .place-more .button { min-height: 44px; font-size: .9rem; }
+.place-more { border-top: 1px solid var(--line); }
+.place-more > summary { justify-content: space-between; min-height: 44px; padding: 5px 1px; color: var(--forest); font-size: .875rem; }
+.place-more .place-address { font-size: .93rem; margin: 0 0 7px; overflow-wrap: anywhere; }
+.map-save-note { color: var(--muted); font-size: .9rem; }
+@media (min-width: 800px) {
+  .budget-columns { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); align-items: start; }
+  .trip-account { grid-column: 2; grid-row: 1; }
+  .day-account { grid-column: 1; grid-row: 1; }
+}
+@media (max-width: 620px) {
+  .food-decisions .decision-grid { grid-template-columns: 1fr; }
+  .food-decisions .decision-card { border-top: 1px solid var(--line); padding: 11px 4px; }
+  .food-decisions .decision-card strong { display: inline; margin-left: 7px; }
+  .budget-page .budget-day { flex-direction: column; align-items: center; gap: 1px; }
+}
+@media (max-width: 370px) {
+  .ledger-action { flex-wrap: wrap; }
+  .ledger-action > strong { margin-left: auto; }
+  .daily-split dt { font-size: .8rem; }
+}

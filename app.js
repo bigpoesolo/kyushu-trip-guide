@@ -1,7 +1,7 @@
-import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=18';
-import { eventPhotos, guides, photos } from './guides.js?v=18';
-import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=18';
-import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=18';
+import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=19';
+import { eventPhotos, guides, photos } from './guides.js?v=19';
+import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=19';
+import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=19';
 
 const view = document.querySelector('#view');
 const dialog = document.querySelector('#detail');
@@ -10,7 +10,7 @@ const notice = document.querySelector('#notice');
 const offlineState = document.querySelector('#offline-state');
 const shell = document.querySelector('.shell');
 const storageKey = 'fukuoka-trip-edits-v1';
-const appVersion = 'v18';
+const appVersion = 'v19';
 const events = Object.fromEntries(schedules.flatMap((list, day) => list.map(event => [event.id, { ...event, day }])));
 const mealEvents = Object.values(events).filter(event => event.meal);
 let saved = { events: {}, tasks: {} };
@@ -68,7 +68,6 @@ const directionsLink = (origin, destination, mode = 'walking', label = mode === 
   `https://www.google.com/maps/dir/?${new URLSearchParams({ api: '1', origin, destination, travelmode: mode })}`);
 const action = (label, name, id, extraClass = '', symbol = '') => `<button type="button" class="button ${extraClass}" data-action="${name}" data-id="${escape(id)}">${symbol ? icon(symbol) : ''}${escape(label)}</button>`;
 const timeText = event => event.timeLabel || [event.start, event.end].filter(Boolean).join('–') + (event.id === 'dinner' ? ' · 종료 예상' : '');
-const dayIcons = ['mountain', 'pin', 'plane'];
 const eventIcons = {
   'flight-out': 'plane', arrival: 'bag', platform: 'walk', 'bus-out': 'bus', bags: 'bag', 'walk-cafe': 'walk', shiba: 'coffee',
   shopping: 'shop', 'walk-back': 'walk', collect: 'bag', 'ryokan-ride': 'car', ryokan: 'hotel', sukiyaki: 'food', bath: 'bath', 'late-snack': 'food',
@@ -84,14 +83,9 @@ const foodIcons = {
 
 const tripDates = ['2026-12-05', '2026-12-06', '2026-12-07'];
 const dayHighlights = [
-  [['shiba', '15:50', '카페 입장 판단'], ['collect', '16:40', '짐 회수·픽업 전화'], ['ryokan', '17:00', '료칸 도착 목표']],
-  [['market-before', '15:45', '크리스마스마켓'], ['mako-transit', '17:05', '마코로 출발'], ['dinner', '18:00', '예약 식사']],
-  [['airport-return', '09:45', '호텔 출발 목표'], ['airport-arrival', '10:15', '국제선 도착 목표'], ['flight-back', '13:00', '귀국편 출발']],
-];
-const dayCopy = [
-  ['유후인은 짧게, 온천은 길게.', '카페는 15:50 입장 가능할 때만. 17:30 체크인 마감이 우선이에요.'],
-  ['하카타의 크리스마스를 천천히.', '호텔에서 쉬고 마켓으로. 17:05에 마코로 출발하면 여유 있어요.'],
-  ['아침은 가볍게, 공항은 여유 있게.', '국제선 터미널 10:15~10:30 도착을 기준으로 움직여요.'],
+  [['shiba', '카페 입장 기준', '15:50'], ['collect', '짐 회수·픽업 전화'], ['ryokan', '료칸 도착 목표']],
+  [['market-before', '마켓 구경'], ['mako-transit', '마코로 출발'], ['dinner', '마코 저녁 예약']],
+  [['airport-return', '호텔 출발 목표'], ['airport-arrival', '국제선 도착 목표'], ['flight-back', '귀국편 출발']],
 ];
 const preparationSteps = new Set(['arrival', 'platform', 'walk-cafe', 'walk-back', 'ryokan-ride', 'bus-ready', 'snack', 'mako-ready', 'mako-return', 'depart']);
 
@@ -151,12 +145,9 @@ function nextScheduled(clock) {
 function renderJourneyFocus() {
   const clock = journeyClock();
   const next = clock.index === day ? nextScheduled(clock) : undefined;
-  const finished = clock.index === day && !next;
-  const phase = clock.date < tripDates[0] ? '여행 전 미리보기' : clock.date > tripDates[2] ? '여행 기록' : clock.index === day ? `현지 ${clock.time} · 진행 기준` : '다른 날짜 미리보기';
-  return `<section class="journey-focus" aria-label="오늘의 핵심"><div class="focus-top"><p class="eyebrow">DAY 0${day + 1} · ${days[day].date}</p><span>${phase}</span></div>
-    <h2>${next ? `${escape(next.start)} ${escape(next.title)}` : finished ? '오늘은 여기까지. 푹 쉬어요.' : dayCopy[day][0]}</h2><p>${next ? `${next.start < clock.time ? '계획상 진행 중' : '다음 계획'} · 실제 이동 상황은 지도에서 확인해요.` : finished ? '마지막 계획 시각이 지났어요. 아래에서 오늘의 일정을 다시 볼 수 있어요.' : dayCopy[day][1]}</p>
-    ${next ? `<div class="links">${action('지금 필요한 상세', 'event', next.id, 'primary', eventIcons[next.id])}</div>` : ''}
-    <div class="day-highlights">${dayHighlights[day].map(([id, time, title]) => `<button type="button" data-action="event" data-id="${id}"><strong>${time}</strong><span>${title}</span>${icon('chevron')}</button>`).join('')}</div></section>`;
+  return `<section class="it-milestones" aria-label="놓치지 말아야 할 시각">
+    ${clock.index === day ? next ? `<button type="button" class="it-live" data-action="event" data-id="${next.id}"><span>현지 ${clock.time} · ${next.start <= clock.time ? '계획상 진행 중' : '다음 일정'}</span><strong>${escape(next.start)}　${escape(next.title)}</strong>${icon('chevron')}</button>` : '<p class="it-finished">오늘의 마지막 일정이 끝났어요.</p>' : ''}
+    <div class="it-stops">${dayHighlights[day].map(([id, label, cutoff]) => `<button type="button" data-action="event" data-id="${id}"><strong>${cutoff || escape(currentEvent(id).start)}</strong><span>${label}</span></button>`).join('')}</div></section>`;
 }
 
 function notify(message) {
@@ -202,8 +193,12 @@ function currentEvent(id) {
   return event;
 }
 
-function titleBlock(label, title, description, symbol) {
-  return `<div class="section-head${symbol ? ' section-banner' : ''}"><div><p class="eyebrow">${label}</p><h2>${title}</h2><p>${description}</p></div>${symbol ? `<div class="banner-mark">${icon(symbol)}</div>` : ''}</div>`;
+function titleBlock(title, description) {
+  return `<header class="section-head section-banner"><h1>${title}</h1><p>${description}</p></header>`;
+}
+
+function scheduleCost(id) {
+  return eventBudgetLabel(id).split(' · ').map(part => `<span>${escape(part)}</span>`).join(' ');
 }
 
 function renderSchedule() {
@@ -213,80 +208,82 @@ function renderSchedule() {
   const warning = warningEvent === 'taxi-am' && event.status !== 'todo' ? [statuses[event.status], event.title] : [warningTitle, warningText];
   const allEvents = schedules[day].map(item => currentEvent(item.id)).sort((a, b) => a.start.localeCompare(b.start));
   const timeline = allEvents.filter(item => fullSchedule || !preparationSteps.has(item.id));
-  return `<div class="days" aria-label="날짜 선택">${days.map((item, index) => `<button type="button" class="day-button" data-action="day" data-id="${index}" aria-pressed="${index === day}">${icon(dayIcons[index])}<span><strong>${item.short}</strong><small>${item.date}</small></span><span class="day-index">0${index + 1}</span></button>`).join('')}</div>
+  return `<div class="it-days" role="group" aria-label="여행 날짜 선택">${days.map((item, index) => `<button type="button" data-action="day" data-id="${index}" aria-pressed="${index === day}"><strong>${item.date}</strong><span>${item.short}</span></button>`).join('')}</div>
     <div id="journey-focus">${renderJourneyFocus()}</div>
-    <div class="schedule-layout">
-    <aside class="day-aside" aria-label="당일 참고">
-      <button type="button" class="warning" data-action="event" data-id="${warningEvent}">${mark('clock')}<span><b>${escape(warning[0])}</b><small>${escape(warning[1])}</small></span>${icon('chevron')}</button>
-      <button type="button" class="budget-jump" data-action="budget" data-id="${day}">${mark('wallet')}<span><small>오늘 현지 예산 · 두 사람</small><strong>${escape(dailyBudgetLabel(day))}</strong></span>${icon('chevron')}</button>
-      <div class="toolbar">
+    <div class="it-layout">
+    <aside class="it-aside" aria-label="당일 참고">
+      <button type="button" class="it-reminder" data-action="event" data-id="${warningEvent}">${icon('clock')}<span><strong>${escape(warning[0])}</strong><small>${escape(warning[1])}</small></span></button>
+      <button type="button" class="it-budget" data-action="budget" data-id="${day}">${icon('wallet')}<span><small>현지 예산 · 2인</small><strong>${escape(dailyBudgetLabel(day))}</strong></span></button>
+      <details class="it-shortcuts"><summary>이날의 바로가기</summary><div class="toolbar">
         ${day === 0 ? `${action('유후인 간식 고르기', 'event', 'shopping', '', 'coffee')}${action('체크인 먼저 대안', 'checkin-first', '', '', 'route')}` : day === 1 ? `${action('우동 점심 고르기', 'event', 'lunch', '', 'bowl')}${action('마코 지하철 경로', 'event', 'mako-transit', '', 'route')}` : `${action('공항 이동 대안', 'event', 'airport-return', '', 'route')}${action('예약·관련 메일', 'mailbox', '', '', 'mail')}`}
-      </div>
+      </div></details>
     </aside>
-    <section class="timeline-panel" aria-label="시간순 일정"><div class="list-heading"><strong>${escape(info.title)}</strong><button class="text-button" type="button" data-action="timeline-mode" aria-pressed="${fullSchedule}">${fullSchedule ? '핵심만 보기' : `이동·준비 포함 전체 ${allEvents.length}개`}</button></div>
-    <ol class="timeline">${timeline.map(item => {
-      const sub = item.selected ? `내 선택 · ${foods[item.selected].name}` : item.subtitle;
-      return `<li><button class="event${item.fixed ? ' fixed-event' : ''}${item.status === 'option' ? ' optional-event' : ''}" type="button" data-action="event" data-id="${item.id}">
-        <span class="time">${escape(item.start)}${item.timeLabel ? `<small>${escape(item.timeLabel.replace(`${item.start} `, ''))}</small>` : item.end ? `<small>${item.id === 'dinner' ? '~' : '–'} ${item.end}${item.id === 'dinner' ? ' 예상' : ''}</small>` : ''}</span>
-        ${mark(eventIcons[item.id])}
-        <span><strong>${escape(item.title)}</strong>${sub ? `<span class="meta">${escape(sub)}</span>` : ''}<span class="chips">${item.status !== 'plan' ? badge(statuses[item.status], item.status) : ''}${item.deadline ? badge(item.deadline, 'deadline') : ''}${item.candidates ? badge(item.selected ? '내 선택 있음' : `${item.candidates.length}곳 비교 · 미선택`, 'pending') : ''}</span><span class="event-cost">${icon('wallet')}${escape(eventBudgetLabel(item.id))}</span></span>
-        ${icon('chevron')}</button></li>`;
+    <section class="it-agenda" aria-labelledby="it-agenda-title"><div class="it-agenda-head"><h2 id="it-agenda-title">시간별 일정</h2><button class="it-toggle" type="button" data-action="timeline-mode" aria-pressed="${fullSchedule}">${fullSchedule ? '핵심만 보기' : `이동·준비 포함 전체 ${allEvents.length}개`}</button></div>
+    <ol class="it-timeline">${timeline.map(item => {
+      const status = item.candidates && item.selected ? '내 선택' : item.status !== 'plan' ? statuses[item.status] : item.candidates ? `후보 ${item.candidates.length}곳` : '';
+      const sub = item.selected ? (item.title.includes(foods[item.selected].name) ? '' : foods[item.selected].name)
+        : item.deadline || (['sukiyaki', 'dinner'].includes(item.id) ? '' : item.subtitle);
+      const end = item.timeLabel ? item.timeLabel.replace(`${item.start} `, '') : item.end ? `– ${item.end}${item.id === 'dinner' ? ' 예상' : ''}` : '';
+      return `<li><button class="it-stop it-${item.status}" type="button" data-action="event" data-id="${item.id}">
+        <span class="it-time"><strong>${escape(item.start)}</strong>${end ? `<small>${escape(end)}</small>` : ''}</span>
+        <span class="it-entry"><span class="it-entry-head"><strong>${escape(item.title)}</strong>${status ? `<span class="it-status">${escape(status)}</span>` : ''}</span>${sub && sub !== item.title ? `<span class="it-sub${item.deadline ? ' it-deadline' : ''}">${escape(sub)}</span>` : ''}<span class="it-cost">${scheduleCost(item.id)}</span></span>
+      </button></li>`;
     }).join('')}</ol></section></div>`;
 }
 
 function renderFood() {
   const listings = foodListings();
-  return `${titleBlock('FOOD & LITTLE TREATS', '오늘은 뭘 먹을까', '예약 식당부터 우동 점심, 유후인 간식까지.', 'food')}
+  return `${titleBlock('맛집과 간식', '유후인 거리 간식부터 하카타의 저녁 예약까지')}
     ${renderFoodDecisions()}
     <div class="scope-tabs" aria-label="맛집 목록 범위">${[['trip', '이번 여행'], ['all', '조사한 모든 곳']].map(([id, label]) => `<button type="button" data-action="food-scope" data-id="${id}" aria-pressed="${foodScope === id}">${label}</button>`).join('')}</div>
-    <label class="search-field">${icon('pin')}<span class="sr-only">식당·메뉴 검색</span><input type="search" id="food-search" placeholder="식당 이름, 우동, 명란…" value="${escape(foodQuery)}" autocomplete="off"></label>
+    <label class="search-field"><span class="food-search-symbol" aria-hidden="true"></span><span class="sr-only">식당·메뉴 검색</span><input type="search" id="food-search" placeholder="식당 이름 또는 메뉴 검색" value="${escape(foodQuery)}" autocomplete="off"></label>
     <details class="food-filters"${area || genre || awardOnly ? ' open' : ''}><summary>지역·메뉴·백명점 필터${area || genre || awardOnly ? ' · 적용 중' : ''}</summary><div class="food-toolbar"><div class="toolbar" aria-label="지역 필터">${Object.entries({ '': '전체 지역', ...areas }).map(([id, label]) => `<button type="button" class="filter" data-action="area" data-id="${id}" aria-pressed="${area === id}">${label}</button>`).join('')}</div>
       <button type="button" class="filter award-filter" data-action="awards" aria-pressed="${awardOnly}">${icon('sparkle')}백명점만</button></div>
     <div class="menu-toolbar" role="group" aria-label="메뉴 종류"><button type="button" class="filter" data-action="genre" data-id="" aria-pressed="${!genre}">전체 메뉴</button>${Object.entries(foodGenres).filter(([, group]) => group.ids.some(id => foodScope === 'all' || tripFoodIds.includes(id))).map(([id, group]) => `<button type="button" class="filter" data-action="genre" data-id="${id}" aria-pressed="${genre === id}">${escape(group.label)} <span>${group.ids.filter(id => foodScope === 'all' || tripFoodIds.includes(id)).length}</span></button>`).join('')}</div>
-    <p class="meta food-research-note">${foodScope === 'trip' ? '동선에 맞는 12곳을 먼저 모았어요. 더 많은 대안은 「조사한 모든 곳」에서 볼 수 있어요.' : '비교용 자료도 포함해요. 타이라·하가쿠레는 일요일 휴무이며 이번 여행 기본 후보에서 제외했어요.'}</p></details>
+    <p class="meta food-research-note">${foodScope === 'trip' ? '여행 동선에 맞는 ' + tripFoodIds.length + '곳이에요.' : '타이라·하가쿠레는 일요일 휴무예요.'}</p></details>
     <div id="food-results" aria-live="polite">${renderFoodResults(listings)}</div>`;
 }
 
-function foodListings() {
+function foodListings(scope = foodScope) {
   const query = foodQuery.trim().toLocaleLowerCase('ko-KR');
-  return Object.entries(foods).filter(([id, food]) => food.area && (foodScope === 'all' || tripFoodIds.includes(id)) && (!area || food.area === area) && (!awardOnly || food.award) && (!genre || foodGenres[genre].ids.includes(id)) && (!query || `${food.name} ${food.menu} ${food.jp || ''}`.toLocaleLowerCase('ko-KR').includes(query)))
+  return Object.entries(foods).filter(([id, food]) => food.area && (scope === 'all' || tripFoodIds.includes(id)) && (!area || food.area === area) && (!awardOnly || food.award) && (!genre || foodGenres[genre].ids.includes(id)) && (!query || `${food.name} ${food.menu} ${food.jp || ''}`.toLocaleLowerCase('ko-KR').includes(query)))
     .sort(([a], [b]) => (tripFoodIds.indexOf(a) < 0 ? 99 : tripFoodIds.indexOf(a)) - (tripFoodIds.indexOf(b) < 0 ? 99 : tripFoodIds.indexOf(b)));
 }
 
 function renderFoodResults(listings) {
-  return `<div class="list-heading"><strong>${area ? areas[area] : foodScope === 'trip' ? '이번 여행에서' : '전체 조사'}</strong><span>${listings.length}곳</span></div>
+  return `<div class="list-heading food-result-title"><strong>${area ? areas[area] : foodScope === 'trip' ? '동선에 맞는 식당' : '모든 식당'}</strong><span>${listings.length}곳</span></div>
     ${listings.length ? `<ul class="food-grid">${listings.map(([id, food]) => {
       const photo = photos[food.photo];
       return `<li><button type="button" class="food-card" data-action="food" data-id="${id}">
-      ${photo ? `<span class="food-thumb"><img src="./${photo.file}" width="80" height="92" alt="" loading="lazy" decoding="async"><small>${photo.source ? '매장 사진' : '메뉴 예시'}</small></span>` : mark(foodIcons[id] || 'food')}<span><span class="food-area">${escape(areas[food.area])}${id === 'mako' ? ' · 18:00 예약' : id === 'sofuren' ? ' · 야식 저장' : ''}</span><strong>${escape(food.name)}</strong><span class="meta">${escape(food.menu)}</span>
-      <span class="chips">${food.rating ? badge(`타베로그 ${food.rating.toFixed(2)}`, 'rating') : ''}${food.award ? badge(`백명점 · ${food.award[0]}`, 'award') : ''}${['taira', 'hagakure'].includes(id) ? badge('일요일 휴무', 'todo') : ''}</span></span>${icon('chevron')}</button></li>`;
-    }).join('')}</ul>` : `<div class="empty">${mark('pin')}<div><p>조건에 맞는 식당이 없어요.</p>${action('필터 초기화', 'food-reset', '')}</div></div>`}`;
+      ${photo ? `<span class="food-thumb"><img src="./${photo.file}" width="100" height="108" alt="" loading="lazy" decoding="async">${photo.source ? '' : '<small>메뉴 예시</small>'}</span>` : mark(foodIcons[id] || 'food')}<span class="food-info"><span class="food-area">${escape(areas[food.area])}${id === 'mako' ? ' · 18:00 예약' : id === 'sofuren' ? ' · 야식 저장' : ''}</span><strong>${escape(food.name)}</strong><span class="meta">${escape(food.menu)}</span>
+      <span class="chips">${food.rating ? badge(`타베로그 ${food.rating.toFixed(2)}`, 'rating') : ''}${food.award ? badge(`백명점 · ${food.award[0]}`, 'award') : ''}${['taira', 'hagakure'].includes(id) ? badge('일요일 휴무', 'todo') : ''}</span></span></button></li>`;
+    }).join('')}</ul>` : `<div class="empty">${mark('pin')}<div><p>조건에 맞는 식당이 없어요.</p><div class="links">${foodScope === 'trip' && foodListings('all').length ? action('모든 식당에서 결과 보기', 'food-scope', 'all') : ''}${action('검색·필터 초기화', 'food-reset', '')}</div></div></div>`}`;
 }
 
 function renderFoodDecisions() {
   const undecided = foodDecisions.filter(item => item.status === 'todo' && !currentEvent(item.event).selected).length;
-  return `<section class="food-decisions" aria-label="식사 선택 현황"><div class="list-heading"><strong>먹거리 계획</strong><span>${undecided}가지 선택 중 · 야식은 선택 방문</span></div>
-    <div class="decision-grid">${foodDecisions.map(item => { const selected = currentEvent(item.event).selected; return `<button type="button" class="decision-card" data-action="event" data-id="${item.event}"><span class="chips">${badge(selected ? '내 기기에서 선택' : item.label, selected ? 'plan' : item.status)}</span><strong>${escape(selected ? foods[selected].name : item.title)}</strong><small>${escape(selected ? '식당을 골랐어요. 실제 예약·대기는 별도 확인해요.' : item.note)}</small><span class="decision-open">일정·후보 보기 ${icon('chevron')}</span></button>`; }).join('')}</div></section>`;
+  return `<details class="food-decisions"><summary><strong>간식·점심·야식 계획</strong><span>${undecided ? undecided + '가지 선택 중' : '선택 완료'}</span></summary>
+    <div class="decision-grid">${foodDecisions.map(item => { const selected = currentEvent(item.event).selected; return `<button type="button" class="decision-card" data-action="event" data-id="${item.event}"><span>${badge(selected ? '기기에서 선택' : item.label, selected ? 'plan' : item.status)}<strong>${escape(selected ? foods[selected].name : item.title)}</strong></span><small>${escape(selected ? '이 기기에 저장했어요. 예약과 대기는 별도예요.' : item.note)}</small></button>`; }).join('')}</div></details>`;
 }
 
 function renderMaps() {
   const localPlaces = mealEvents.map(item => currentEvent(item.id)).filter(item => item.selected && foods[item.selected].jp).map(item => ({ name: foods[item.selected].name, kind: '내 기기 선택', status: 'plan', label: '내 선택 · 예약 별도', event: item.id, place: foods[item.selected].jp, mode: 'walking', icon: foodIcons[item.selected] || 'food', when: `${days[item.day].date} ${item.start}`, note: '이 기기에서 고른 식당이에요. 다른 휴대폰의 선택과 자동으로 합쳐지지는 않아요.' }));
   const places = [...savedPlaces, ...localPlaces.filter(item => !savedPlaces.some(place => place.place === item.place))];
-  return `${titleBlock('05 / SAVED PLACES', '우리 여행 장소', '숙소와 선택한 식당, 하카타 크리스마스마켓을 한곳에 모았어요.', 'pin')}
-    <div class="map-note"><span>${icon('pin')}</span><p>두 분이 함께 보는 앱의 장소 목록이에요. Google Maps 계정에도 저장하려면 <strong>장소 열기 → 저장</strong>을 눌러 원하는 목록에 담아주세요.</p></div>
-    <section class="map-route"><p class="eyebrow">SUNDAY · CHRISTMAS MARKET</p><h3>하카타역 광장을 중심으로</h3><p>우동 점심 → 포르자 휴식 → 마켓 → 마코 18:00 → 소후렌은 선택 → 마켓 야경</p><div class="rail-line" aria-label="마코행 지하철"><span><b>N18</b>하카타</span><span class="rail-direction">나나쿠마선 · 하시모토 방면<small>환승 없이 5정거장 · 약 8~9분</small></span><span><b>N13</b>야쿠인오도리</span></div><p class="meta">17:05 마켓 출발 · 1번 출구 → 도보 약 3분 → 마코 2층</p><div class="links">${action('마코 가는 길 자세히', 'event', 'mako-transit', '', 'route')}${action('마코 뒤 야식 동선', 'event', 'mako-return', '', 'route')}</div></section>
+  return `${titleBlock('저장한 장소', '숙소와 식당, 크리스마스마켓으로 길찾기')}
+    <details class="map-route"><summary><span>${icon('route')}일요일 마켓·마코 동선</span><b>17:05 출발</b></summary><div class="map-route-body"><p>우동 점심 · 포르자 휴식 · 마켓 · 마코 18:00 · 소후렌(선택) · 마켓 야경</p><div class="rail-line" aria-label="마코행 지하철"><span><b>N18</b>하카타</span><span class="rail-direction">나나쿠마선 · 하시모토 방면<small>환승 없이 5정거장 · 약 8~9분</small></span><span><b>N13</b>야쿠인오도리</span></div><p>17:05 마켓 출발. 야쿠인오도리역 1번 출구에서 마코까지 도보 약 3분이에요.</p><div class="links">${action('마코 가는 길', 'event', 'mako-transit', '', 'route')}${action('저녁 후 야식 동선', 'event', 'mako-return', '', 'route')}</div></div></details>
     <div class="list-heading"><strong>바로 찾아갈 장소</strong><span>공통 ${savedPlaces.length}곳${localPlaces.length ? ' + 내 선택' : ''}</span></div>
-    <div class="place-grid">${places.map(item => `<article class="place-card"><div class="place-heading">${mark(item.icon)}<div><span class="food-area">${escape(item.kind)} · ${escape(item.when)}</span><h3>${escape(item.name)}</h3></div></div><div class="chips">${badge(item.label, item.status)}</div><p>${escape(item.note)}</p><p class="meta place-address" lang="ja">${escape(item.place)}</p>${destinationActions(item.place, '', item.mode)}<div class="links">${mapLink(item.place, 'Google Maps에서 저장')}${action('일정 상세', 'event', item.event, '', 'calendar')}</div></article>`).join('')}</div>
+    <div class="place-grid">${places.map(item => `<article class="place-card"><div class="place-heading">${mark(item.icon)}<div><span class="food-area">${escape(item.kind)} · ${escape(item.when)}</span><h3>${escape(item.name)}</h3></div></div><div class="chips">${badge(item.label, item.status)}</div><p>${escape(item.note)}</p><div class="destination-actions place-actions">${link('길찾기', 'https://www.google.com/maps/dir/?' + new URLSearchParams({ api: '1', destination: item.place, travelmode: item.mode }))}${mapLink(item.place, '지도에서 열기')}</div><details class="place-more"><summary>일본어 주소·일정</summary><p class="place-address" lang="ja">${escape(item.place)}</p><div class="links">${action('주소 복사', 'copy', item.place, '', 'pin')}${action('일정 상세', 'event', item.event, '', 'calendar')}</div></details></article>`).join('')}</div>
+    <p class="map-save-note">Google Maps에도 보관하려면 ‘지도에서 열기’를 누른 뒤 지도 앱에서 ‘저장’을 선택하세요.</p>
     ${renderFoodDecisions()}`;
 }
 
 function renderTasks() {
-  const group = done => tasks.filter(task => Boolean(saved.tasks[task.id]) === done).map(task => `<li><button type="button" class="task-card${done ? ' is-done' : ''}" data-action="task" data-id="${task.id}">
-      <span class="task-check" aria-hidden="true">${done ? icon('check') : ''}</span><span><span class="food-area">${days[events[task.event].day].date}</span><strong class="${done ? 'done' : ''}">${escape(task.title)}</strong><span class="meta">${escape(task.info)}</span>${!done && task.priority ? badge('우선 확인', 'deadline') : ''}</span>${icon('chevron')}</button></li>`).join('');
+  const group = done => tasks.filter(task => Boolean(saved.tasks[task.id]) === done).sort((a, b) => Number(Boolean(b.priority)) - Number(Boolean(a.priority))).map(task => `<li class="task-row${done ? ' is-done' : ''}"><button type="button" class="task-toggle" data-action="toggle-task" data-id="${task.id}" aria-pressed="${done}" aria-label="${escape(task.title)} 완료"><span class="task-check">${done ? icon('check') : ''}</span></button><button type="button" class="task-card" data-action="task" data-id="${task.id}">
+      <span><span class="task-meta">${days[events[task.event].day].date}${!done && task.priority ? ' · 우선 확인' : ''}</span><strong class="${done ? 'done' : ''}">${escape(task.title)}</strong><span class="meta">${escape(task.info)}</span></span>${icon('chevron')}</button></li>`).join('');
   const open = group(false);
   const complete = group(true);
   const doneCount = tasks.filter(task => saved.tasks[task.id]).length;
-  return `${titleBlock('03 / BEFORE YOU GO', '출발 전 할 일', '예약·회신·운영시간을 차례로 확인해요.', 'checklist')}
+  return `${titleBlock('출발 전 할 일', '왼쪽에 체크하면 완료돼요. 항목을 눌러 연결된 일정을 확인하세요.')}
     <section class="progress-card" aria-label="준비 진행 상황"><div class="progress-header"><strong>여행 준비</strong><span><b>${doneCount}</b> / ${tasks.length} 완료</span></div><progress value="${doneCount}" max="${tasks.length}" aria-label="완료한 할 일"></progress></section>
     <div class="list-heading"><strong>남은 할 일</strong><span>${tasks.length - doneCount}개</span></div>
     ${open ? `<ul class="tasks">${open}</ul>` : `<div class="empty">${mark('check')}<p>남은 할 일이 없어요.</p></div>`}
@@ -300,9 +297,8 @@ function mailCards(list, fromEvent = '') {
 }
 
 function renderMails() {
-  return `${titleBlock('04 / RESERVATIONS & MAIL', '예약과 여행 메일', '확정서와 숙소 답장을 일정별로 모았어요.', 'mail')}
-    <div class="mail-note"><span>${icon('mail')}</span><p>마지막 갱신 <strong>${mailChecked}</strong>. 각 항목에서 예약 금액과 조건을 확인할 수 있어요. 원문과 첨부파일은 예약한 Gmail 계정에서 열어주세요.</p></div>
-    <div class="list-heading"><strong>관련 메일</strong><span>${travelMails.length}개 묶음</span></div>
+  return `${titleBlock('예약과 메일', '숙소·식당·버스의 확정 내역과 Gmail 원문을 확인하세요.')}
+    <div class="list-heading"><strong>예약 메일 ${travelMails.length}건</strong><span>${mailChecked} 확인</span></div>
     ${mailCards(travelMails)}`;
 }
 
@@ -316,16 +312,29 @@ function bookingDetails() {
 function showMail(id, fromEvent) {
   recordDetail('mail', id, fromEvent);
   const mail = travelMails.find(item => item.id === id);
-  showDetail(`${fromEvent ? action('‹ 일정 상세', 'event', fromEvent) : ''}
+  showDetail(`${fromEvent ? action('일정 상세', 'event', fromEvent) : ''}
     ${detailHeading(`${mail.source} · ${mail.date}`, mail.title, 'mail')}
-    <div class="chips">${badge(mail.label, mail.status)}${badge('Gmail 원문 확인')}</div><p class="detail-summary">${escape(mail.summary)}</p>
+    <div class="chips">${badge(mail.label, mail.status)}</div><p class="detail-summary">${escape(mail.summary)}</p>
+    <div class="mail-original">${link('Gmail에서 원문·첨부 열기', gmailSearch(mail.query))}<small>예약한 Gmail 계정에서 열려요.</small></div>
     <section class="detail-section"><h3>${icon('checklist')}메일 핵심 내용</h3><ul class="mail-notes">${mail.notes.map(note => `<li>${escape(note)}</li>`).join('')}</ul></section>
-    <section class="detail-section"><h3>${icon('mail')}원문·첨부파일</h3><p>예약한 Gmail 계정에서 메일을 찾아 열어요. 예약번호와 승차권은 원문에서 확인해 주세요.</p><div class="links">${link('Gmail에서 원문·첨부 열기', gmailSearch(mail.query))}</div></section>
     <section class="detail-section"><h3>${icon('calendar')}연결된 일정</h3><div class="links">${mail.events.map(eventId => action(events[eventId].title, 'event', eventId, '', eventIcons[eventId])).join('')}</div></section>`);
+}
+
+function renderCover() {
+  const cover = document.querySelector('#trip-cover');
+  cover.hidden = tab !== 'schedule';
+  if (cover.hidden || cover.dataset.day === String(day)) return;
+  const photo = [photos.yufuin, photos.market, photos.airport][day];
+  const date = ['12월 5일 토요일', '12월 6일 일요일', '12월 7일 월요일'][day];
+  const route = ['인천 · 후쿠오카공항 · 유후인', '유후인 · 하카타 · 야쿠인', '하카타 · 후쿠오카공항 · 인천'][day];
+  const credit = photo.source ? `<a href="${photo.source}" target="_blank" rel="noopener noreferrer">${photo.author}</a>${photo.licenseUrl ? ` · <a href="${photo.licenseUrl}" target="_blank" rel="noopener noreferrer">${photo.license}</a>` : ''}` : '유후인 겨울 풍경 · 생성 이미지';
+  cover.dataset.day = String(day);
+  cover.innerHTML = `<div class="cover-copy"><p class="cover-date"><span>${day + 1}일차</span><time datetime="${tripDates[day]}">${date}</time></p><h1>${days[day].title}</h1><p class="cover-route">${icon('route')}${route}</p></div><div class="cover-scene"><img src="./${photo.file}" alt="" fetchpriority="high"><small>${credit}</small></div>`;
 }
 
 function render() {
   shell.dataset.tab = tab;
+  renderCover();
   document.title = `${({ schedule: days[day].date + ' 일정', maps: '우리 여행 장소', food: '맛집과 간식', budget: days[day].date + ' 예산', mail: '예약·메일', tasks: '출발 전 할 일' })[tab]} · 규슈 여행 노트`;
   document.querySelector('#task-count').textContent = tasks.filter(task => !saved.tasks[task.id]).length;
   for (const button of document.querySelectorAll('button[data-tab]')) {
@@ -407,7 +416,8 @@ function mealCandidates(event, guide) {
   }).join('')}</div></section>`;
 }
 
-function showDetail(html) {
+function showDetail(html, contextLabel) {
+  document.querySelector('#sheet-context').textContent = contextLabel || ({event: '일정 상세', food: '식당·메뉴', mail: '예약 메일', task: '준비할 일'})[routeDetail?.kind] || '여행 안내';
   detail.innerHTML = html;
   if (!dialog.open) dialog.showModal();
   dialog.scrollTop = 0;
@@ -415,12 +425,15 @@ function showDetail(html) {
 }
 
 function showEvent(id, backTask) {
-  if (tab !== 'budget') day = events[id].day;
+  if (tab !== 'budget' && day !== events[id].day) {
+    day = events[id].day;
+    render();
+  }
   recordDetail('event', id, backTask);
   const event = currentEvent(id);
   const task = tasks.find(item => item.event === id);
   const guide = guides[id] || {};
-  const destination = event.place || foods[event.selected]?.jp;
+  const destination = foods[event.selected]?.jp || event.place;
   const sources = [...(event.links || []), ...(guide.links || [])];
   const editing = `<details class="detail-section edit-section"><summary>${icon('edit')}일정 수정</summary>
     <form class="edit-grid" id="edit-event" data-id="${id}" data-back-task="${escape(backTask)}">
@@ -430,29 +443,34 @@ function showEvent(id, backTask) {
       <button class="button primary" type="submit">저장</button>
     </form></details>`;
   const cover = photos[foods[event.selected]?.photo] || (id === 'lunch' ? { ...photos['food-daichi'], caption: `점심 후보 · ${photos['food-daichi'].caption}` } : eventPhotos[id]) || photos.yufuin;
-  showDetail(`${detailPhoto(cover)}
-    ${backTask ? action('‹ 할 일', 'task', backTask) : ''}
-    ${detailHeading(`${days[event.day].date} · ${escape(timeText(event))}`, event.title, eventIcons[id])}
-    <div class="chips">${badge(statuses[event.status], event.status)}${event.deadline ? badge(event.deadline, 'deadline') : ''}</div>
-    ${event.subtitle ? `<p class="detail-summary">${escape(event.subtitle)}</p>` : ''}
-    ${eventBudgetDetails(id)}
-    <div class="links">${action(tab === 'budget' ? '예산표로 돌아가기' : '이날 예산표 보기', 'budget', tab === 'budget' ? day : event.day, '', 'wallet')}</div>
+  const route = criticalGuide(id);
+  const mails = travelMails.filter(mail => mail.events.includes(id));
+  showDetail(`<article class="it-detail">
+    ${backTask ? action('할 일로 돌아가기', 'task', backTask) : ''}
+    ${detailPhoto(cover)}
+    <header class="it-detail-head"><p><span>${days[event.day].date}</span><strong>${escape(timeText(event))}</strong></p>
+      <h2 id="detail-title">${escape(event.title)}</h2>
+      <div class="chips">${badge(statuses[event.status], event.status)}${event.deadline ? badge(event.deadline, 'deadline') : ''}</div>
+      ${event.subtitle ? `<p class="it-detail-sub">${escape(event.subtitle)}</p>` : ''}</header>
     ${destinationActions(destination, guide.origin, guide.mode)}
-    ${criticalGuide(id)}
+    <details class="it-expense"${tab === 'budget' ? ' open' : ''}><summary><span>두 사람 비용</span><strong class="it-cost">${scheduleCost(id)}</strong></summary>
+      ${eventBudgetDetails(id)}
+      <div class="links">${action(tab === 'budget' ? '예산표로 돌아가기' : '이날 예산표 보기', 'budget', tab === 'budget' ? day : event.day, '', 'wallet')}</div></details>
+    ${route}
     ${event.candidates ? mealCandidates(event, guide) : ''}
+    ${mails.length ? fold('예약·관련 메일', mailCards(mails, id)) : ''}
     ${event.booking ? fold('객실·결제·취소 조건', bookingDetails()) : ''}
     ${destination || guide.directions ? `<section class="detail-section"><h3>${icon('pin')}장소·가는 법</h3>
-      ${guide.directions ? (criticalGuide(id) ? fold('이동 설명 전체 보기', `<p>${escape(guide.directions)}</p>`) : `<p>${escape(guide.directions)}</p>`) : ''}${destination ? `<p class="meta">${escape(destination)}</p>` : ''}
+      ${guide.directions ? (route ? fold('이동 설명 전체 보기', `<p>${escape(guide.directions)}</p>`) : `<p>${escape(guide.directions)}</p>`) : ''}${destination ? `<p class="meta" lang="ja">${escape(destination)}</p>` : ''}
       <div class="links">${destination ? mapLink(destination, '장소·사진 열기') : ''}${event.food ? action('식당 메뉴·사진', 'food', event.food, '', 'food') : ''}</div></section>` : ''}
     ${guideDetails(id, { ...guide, food: event.candidates ? undefined : guide.food })}
     ${event.detail ? fold('현장 참고·확인 근거', `<p>${escape(event.detail)}</p>`) : ''}
     ${event.fallback ? `<section class="detail-section fallback"><h3>${icon('route')}${escape(event.fallback[0])}</h3><p>${escape(event.fallback[1])}</p></section>` : ''}
     ${sources.length ? fold('공식 안내·참고 링크', `<div class="links">${sources.map(([label, url]) => link(label, url)).join('')}</div>`) : ''}
-    ${travelMails.some(mail => mail.events.includes(id)) ? fold('예약·관련 메일', mailCards(travelMails.filter(mail => mail.events.includes(id)), id)) : ''}
-    ${guide.related || event.area ? `<section class="detail-section"><h3>${icon('route')}함께 보기</h3><div class="links">${(guide.related || []).map(related => action(events[related].title, 'event', related, '', eventIcons[related])).join('')}${event.area ? action('주변 맛집·백명점', 'nearby', event.area, '', 'pin') : ''}</div></section>` : ''}
+    ${guide.related || event.area ? fold('이어서 볼 일정·주변 맛집', `<div class="links">${(guide.related || []).map(related => action(events[related].title, 'event', related, '', eventIcons[related])).join('')}${event.area ? action('주변 맛집·백명점', 'nearby', event.area, '', 'pin') : ''}</div>`) : ''}
     ${event.note ? `<section class="detail-section"><h3>내 메모</h3><p>${escape(event.note)}</p></section>` : ''}
     ${task && !backTask ? `<section class="detail-section"><h3>연결된 할 일</h3>${action(`${saved.tasks[task.id] ? '✓ ' : ''}${task.title}`, 'task', task.id)}</section>` : ''}
-    ${editing}`);
+    ${editing}</article>`);
 }
 
 function showFood(id, fromEvent) {
@@ -559,7 +577,13 @@ document.addEventListener('click', event => {
     case 'task': showTask(id); break;
     case 'task-event': showEvent(tasks.find(task => task.id === id).event, id); break;
     case 'toggle-task':
-      if (persist({ ...saved, tasks: { ...saved.tasks, [id]: !saved.tasks[id] } })) showTask(id);
+      if (persist({ ...saved, tasks: { ...saved.tasks, [id]: !saved.tasks[id] } })) {
+        if (dialog.open) showTask(id);
+        else {
+          view.querySelector(`[data-action="toggle-task"][data-id="${id}"]`).focus({ preventScroll: true });
+          notify(saved.tasks[id] ? '완료로 표시했어요.' : '남은 할 일로 옮겼어요.');
+        }
+      }
       break;
     case 'candidate': {
       const [eventId, foodId] = id.split('|');
@@ -657,10 +681,9 @@ if ('serviceWorker' in navigator) {
 window.addEventListener('online', () => showNetworkState(offlineReady));
 window.addEventListener('offline', () => showNetworkState(offlineReady));
 window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; });
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && tab === 'schedule' && !dialog.open) render();
-});
-setInterval(() => {
+function refreshJourneyClock() {
   const focus = view.querySelector('#journey-focus');
-  if (tab === 'schedule' && !dialog.open && focus && !focus.contains(document.activeElement)) focus.innerHTML = renderJourneyFocus();
-}, 60000);
+  if (!document.hidden && tab === 'schedule' && !dialog.open && focus && !focus.contains(document.activeElement)) focus.innerHTML = renderJourneyFocus();
+}
+document.addEventListener('visibilitychange', refreshJourneyClock);
+setInterval(refreshJourneyClock, 60000);

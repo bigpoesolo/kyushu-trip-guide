@@ -107,12 +107,11 @@ export function eventBudgetLabel(id) {
   if (!r) return '';
   return r.kind === 'unknown' ? kinds.unknown : kinds[r.kind] + ' ' + money(r);
 }
-function line(r, withEvent) {
+function line(r) {
   const source = sources[r.source];
   const links = [
     r.mail && `<button type="button" class="budget-link" data-action="mail" data-id="${r.mail}|${r.event}">예약 메일 보기</button>`,
-    source && `<a class="budget-link" href="${source[1]}" target="_blank" rel="noopener noreferrer">${source[0]} ↗</a>`,
-    withEvent && `<button type="button" class="budget-link" data-action="event" data-id="${r.event}">일정 보기</button>`,
+    source && `<a class="budget-link" href="${source[1]}" target="_blank" rel="noopener noreferrer">${source[0]}</a>`,
   ].filter(Boolean).join('');
   return `<article class="budget-line"><div><span class="budget-kind">${kinds[r.kind]}</span><h4>${r.title}</h4></div><strong>${money(r)}</strong><p>${r.note}</p>${links ? '<div class="budget-links">' + links + '</div>' : ''}</article>`;
 }
@@ -120,18 +119,29 @@ export function eventBudgetDetails(id) {
   const list = related(id);
   const note = references[id]?.[1] || free[id];
   if (!list.length && !note) return '';
-  return `<section class="budget-section event-budget"><h3>비용 · 두 사람</h3>${note ? '<p class="budget-note">' + note + '</p>' : ''}${list.map(r => line(r, false)).join('')}</section>`;
+  return `<section class="budget-section event-budget"><h3>비용 · 두 사람</h3>${note ? '<p class="budget-note">' + note + '</p>' : ''}${list.map(line).join('')}</section>`;
+}
+function ledgerGroup(title, entries, expanded = false) {
+  if (!entries.length) return '';
+  return `<details class="ledger-group"${expanded ? ' open' : ''}><summary><strong>${title}</strong><span>${entries.length}건</span></summary><ul>${entries.map(r => `<li><button class="ledger-action" type="button" data-action="event" data-id="${r.event}"><span><small class="cost-state state-${r.kind}">${kinds[r.kind]}</small><b>${r.title}</b></span><strong>${money(r)}</strong></button></li>`).join('')}</ul></details>`;
 }
 export function renderBudget(day) {
   const b = budgetDays[day];
+  const entries = ledger[day];
+  const tabs = dates.map((date, i) => `<button type="button" class="budget-day" data-action="budget-day" data-id="${i}" aria-pressed="${day === i}"><b>${date}</b><span>${places[i]}</span></button>`).join('');
   const dailyTable = budgetDays.map((d, i) => `<tr><th scope="row">${dates[i]}</th><td>${yen(d.fixed)}</td><td>${range(d.min, d.max)}</td></tr>`).join('');
-  const tabs = dates.map((date, i) => `<button type="button" class="budget-day" data-action="budget-day" data-id="${i}" aria-pressed="${day === i}">${date}</button>`).join('');
-  return `<section class="budget-hero"><p class="budget-kicker">성인 2명 · 2박 3일</p><h2>여행 예산</h2><p>예약에서 확인한 금액</p><strong class="budget-total">${yen(confirmedYen)} + ${usd(scheduled)}</strong><p>약 ${approxWon(confirmedYen, scheduled)} · 항공권 제외 · 포르자는 12/1 결제 전 기준액</p></section>
-    <section class="budget-section"><h3>얼마를 언제 내나요?</h3><table class="budget-table"><thead><tr><th scope="col">결제 상태</th><th scope="col">예약 항목</th><th scope="col">두 사람 합계</th></tr></thead><tbody>
+  return `<div class="budget-page"><header class="section-head section-banner"><h1>여행 예산</h1><p>12월 5–7일 · 두 사람 기준</p></header>
+    <div class="budget-days" role="group" aria-label="지출 내역 날짜">${tabs}</div>
+    <section class="budget-hero"><p class="budget-kicker">${dates[day]} · ${places[day]}</p><h3>이날 현지에서 쓸 돈</h3><strong class="budget-total">${dailyBudgetLabel(day)}</strong><p>약 ${approxWon(b.min)}~${approxWon(b.max)} · 카드와 현금 합계</p><dl class="daily-split"><div><dt>이 중 현지 결제 확정</dt><dd>${yen(b.fixed)}</dd></div><div><dt>선택까지 포함한 상한</dt><dd>${yen(b.limit)}</dd></div></dl></section>
+    <div class="budget-columns"><details class="trip-account"><summary><span>전체 여행 · 예약에서 확인한 금액<strong>${yen(confirmedYen)} + ${usd(scheduled)}</strong><small>약 ${approxWon(confirmedYen, scheduled)} · 항공권 제외</small></span></summary><div class="account-body">
+    <h3>예약 결제 내역</h3><table class="budget-table"><thead><tr><th scope="col">결제 상태</th><th scope="col">예약 항목</th><th scope="col">두 사람 합계</th></tr></thead><tbody>
     <tr><th scope="row">결제 완료</th><td>왕복버스</td><td>${yen(paid)}</td></tr><tr><th scope="row">온라인 카드 지정</th><td>료칸 객실</td><td>${yen(online)}</td></tr><tr><th scope="row">12/1 자동 결제 예정</th><td>포르자 객실</td><td>${usd(scheduled)}</td></tr><tr><th scope="row">현지 결제 확정</th><td>석식 2회·숙박 관련 세금</td><td>${yen(localFixed)}</td></tr><tr><th scope="row">금액 미확인</th><td>제주항공 왕복</td><td>합계 제외</td></tr></tbody></table>
-    <p class="budget-note">료칸은 카드 청구 여부를 확인 중이에요. 포르자는 환율·조정 조건에 따라 원화 청구액이 달라져요.</p></section>
-    <section class="budget-section"><h3>날짜별 현지 예산</h3><table class="budget-table"><thead><tr><th scope="col">날짜</th><th scope="col">현지 확정</th><th scope="col">기본 일정 합계</th></tr></thead><tbody>${dailyTable}</tbody><tfoot><tr><th scope="row">합계</th><td>${yen(localFixed)}</td><td>${range(localMin, localMax)}</td></tr></tfoot></table>
-    <p class="budget-note">기본 일정 합계에는 현지 확정액과 예상 식비·교통비가 들어 있어요. 카드와 현금을 합쳐 3일간 약 <b>${approxWon(localMin)}~${approxWon(localMax)}</b>이에요. 선택 항목까지 잡은 현지 예산 상한은 <b>${yen(localLimit)}</b>이에요.</p></section>
-    <section class="budget-section"><h3>날짜별 지출 내역</h3><div class="budget-days" role="group" aria-label="지출 내역 날짜">${tabs}</div><h3>${dates[day]} · ${places[day]}</h3><p class="budget-note">기본 <b>${dailyBudgetLabel(day)}</b> · 선택 예산 최대 ${yen(b.options)} 추가 · 모두 이용 시 최대 <b>${yen(b.limit)}</b></p><div class="budget-ledger">${ledger[day].map(r => line(r, true)).join('')}</div></section>
-    <section class="budget-section"><h3>여행 전체로 보면</h3><p>온라인 결제분과 현지 기본 일정을 합하면 <b>${range(paid + online + localMin, paid + online + localMax)} + ${usd(scheduled)}</b>예요. 원화로 약 <b>${approxWon(paid + online + localMin, scheduled)}~${approxWon(paid + online + localMax, scheduled)}</b>예요. 선택 항목까지 이용할 때의 계획 상한은 <b>${yen(paid + online + localLimit)} + ${usd(scheduled)}</b>예요.</p><p class="budget-note">11/23 예약 메일·일정 기준. 항공권, 한국 내 이동, 개인 쇼핑은 별도예요. 택시·식비의 범위는 두 사람의 계획액이에요. 원화는 11/23 KB국민은행 31회차 매매기준율(100엔 846.12원, 1달러 1,343.80원)로 반올림했어요. 실제 카드 청구액은 달라져요. <a class="budget-link" href="https://www.kita.net/cmmrcInfo/ehgtGnrlzInfo/rltmEhgt.do" target="_blank" rel="noopener noreferrer">한국무역협회 환율 ↗</a></p></section>`;
+    <p class="budget-note">료칸은 카드 청구 여부를 확인 중이에요. 포르자는 12/1 결제일의 환율과 조정 조건이 적용돼요.</p>
+    <h3>3일간 현지 예산</h3><table class="budget-table"><thead><tr><th scope="col">날짜</th><th scope="col">현지 확정</th><th scope="col">기본 합계</th></tr></thead><tbody>${dailyTable}</tbody><tfoot><tr><th scope="row">합계</th><td>${yen(localFixed)}</td><td>${range(localMin, localMax)}</td></tr></tfoot></table>
+    <p>기본 합계는 약 <b>${approxWon(localMin)}~${approxWon(localMax)}</b>예요. 선택 지출까지 포함한 현지 상한은 <b>${yen(localLimit)}</b>이에요.</p>
+    <h3>전체 여행비 예상</h3><p>온라인 결제분과 현지 기본 일정 합계는 <b>${range(paid + online + localMin, paid + online + localMax)} + ${usd(scheduled)}</b>, 약 <b>${approxWon(paid + online + localMin, scheduled)}~${approxWon(paid + online + localMax, scheduled)}</b>예요. 선택 지출 포함 상한은 <b>${yen(paid + online + localLimit)} + ${usd(scheduled)}</b>예요.</p><p class="budget-note">11/23 예약 메일·일정 기준. 항공권, 한국 내 이동, 개인 쇼핑은 별도예요. 택시·식비는 두 사람의 계획액이에요. 원화는 11/23 KB국민은행 31회차 기준 100엔 846.12원, 1달러 1,343.80원으로 반올림했어요. 실제 청구액은 달라져요. <a class="budget-link" href="https://www.kita.net/cmmrcInfo/ehgtGnrlzInfo/rltmEhgt.do" target="_blank" rel="noopener noreferrer">한국무역협회 환율</a></p></div></details>
+    <section class="day-account"><h3>${dates[day]} 지출 내역</h3>
+    ${ledgerGroup('현지 기본 일정', entries.filter(r => ['fixed', 'base'].includes(r.kind)), true)}
+    ${ledgerGroup('선택 지출 · 최대 ' + yen(b.options), entries.filter(r => r.kind === 'option'))}
+    ${ledgerGroup('사전 예약·항공권', entries.filter(r => ['online', 'paid', 'scheduled', 'unknown'].includes(r.kind)))}</section></div></div>`;
 }
