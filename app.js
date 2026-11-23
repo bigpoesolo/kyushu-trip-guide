@@ -1,7 +1,7 @@
-import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=20';
-import { eventPhotos, guides, photos } from './guides.js?v=20';
-import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=20';
-import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=20';
+import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=21';
+import { eventPhotos, guides, photos } from './guides.js?v=21';
+import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=21';
+import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=21';
 
 const view = document.querySelector('#view');
 const dialog = document.querySelector('#detail');
@@ -10,7 +10,7 @@ const notice = document.querySelector('#notice');
 const offlineState = document.querySelector('#offline-state');
 const shell = document.querySelector('.shell');
 const storageKey = 'fukuoka-trip-edits-v1';
-const appVersion = 'v20';
+const appVersion = 'v21';
 const events = Object.fromEntries(schedules.flatMap((list, day) => list.map(event => [event.id, { ...event, day }])));
 const mealEvents = Object.values(events).filter(event => event.meal);
 let saved = { events: {}, tasks: {} };
@@ -101,6 +101,7 @@ function recordDetail(kind, id, from = '') {
 }
 
 function restoreRoute() {
+  const previousPage = routeHash(null);
   routeApplying = true;
   let parts;
   try { parts = window.location.hash.slice(1).split('/').map(decodeURIComponent); } catch { parts = []; }
@@ -111,7 +112,8 @@ function restoreRoute() {
   const today = journeyClock().index;
   day = ['1', '2', '3'].includes(nextDay) ? Number(nextDay) - 1 : today < 0 ? 0 : today;
   routeDetail = undefined;
-  render();
+  // Retain the expanded expense category when navigating back from its detail.
+  if (tab !== 'budget' || previousPage !== routeHash(null)) render();
   if (kind === 'event' && Object.hasOwn(events, id)) showEvent(id, tasks.some(item => item.id === from) ? from : '');
   else if (kind === 'food' && Object.hasOwn(foods, id)) showFood(id, Object.hasOwn(events, from) ? from : '');
   else if (kind === 'mail' && travelMails.some(item => item.id === id)) showMail(id, Object.hasOwn(events, from) ? from : '');
@@ -227,7 +229,7 @@ function scheduleRow(item) {
   const end = item.timeLabel ? item.timeLabel.replace(`${item.start} `, '') : fullSchedule && item.end ? '– ' + item.end : '';
   // Shared charges and complimentary steps remain available in each event's expense detail.
   const cost = eventBudgetLabel(item.id);
-  const amount = /[¥$]/.test(cost) ? cost.split(' · ')[0] : item.id.startsWith('flight-') ? '항공권 금액 미확인' : '';
+  const amount = /[¥$]/.test(cost) ? cost.split(' · ')[0] : '';
   return `<li><button class="it-stop it-${item.status}" type="button" data-action="event" data-id="${item.id}">
     <span class="it-time"><strong>${escape(item.start)}</strong>${end ? `<small>${escape(end)}</small>` : ''}</span>
     <span class="it-entry"><strong>${escape(item.title)}</strong>${state || note || amount ? `<small class="it-row-info">${[state && `<span class="it-status">${escape(state)}</span>`, note && escape(note), amount && escape(amount)].filter(Boolean).join(' · ')}</small>` : ''}</span>${icon('chevron')}</button></li>`;
@@ -481,6 +483,7 @@ function showEvent(id, backTask) {
   const cover = photos[foods[event.selected]?.photo] || (id === 'lunch' ? { ...photos['food-daichi'], caption: `점심 후보 · ${photos['food-daichi'].caption}` } : eventPhotos[id]) || photos.yufuin;
   const route = criticalGuide(id);
   const timings = visitTimings(event);
+  const expenses = eventBudgetDetails(id);
   const mails = travelMails.filter(mail => mail.events.includes(id));
   showDetail(`<article class="it-detail">
     ${backTask ? action('할 일로 돌아가기', 'task', backTask) : ''}
@@ -492,9 +495,9 @@ function showEvent(id, backTask) {
     ${(id === 'dinner' || id === 'mako-transit') ? '<p class="visit-hint">포르자에서 바로 가면 17:15 출발 목표</p>' : ''}
     ${!timings.length && (event.deadline || event.subtitle) ? `<p class="it-detail-sub">${escape(event.deadline || event.subtitle)}</p>` : ''}
     ${destinationActions(destination, guide.origin, guide.mode)}
-    <details class="it-expense"${tab === 'budget' ? ' open' : ''}><summary><span>두 사람 비용</span><strong class="it-cost">${scheduleCost(id)}</strong></summary>
-      ${eventBudgetDetails(id)}
-      <div class="links">${action(tab === 'budget' ? '예산표로 돌아가기' : '이날 예산표 보기', 'budget', tab === 'budget' ? day : event.day, '', 'wallet')}</div></details>
+    ${expenses ? `<details class="it-expense"${tab === 'budget' ? ' open' : ''}><summary><span>두 사람 비용</span><strong class="it-cost">${scheduleCost(id)}</strong></summary>
+      ${expenses}
+      <div class="links">${action(tab === 'budget' ? '예산표로 돌아가기' : '이날 예산표 보기', 'budget', tab === 'budget' ? day : event.day, '', 'wallet')}</div></details>` : ''}
     ${route}
     ${event.candidates ? mealCandidates(event, guide) : ''}
     ${mails.length ? fold('예약·관련 메일', mailCards(mails, id)) : ''}
@@ -588,7 +591,7 @@ document.addEventListener('click', event => {
       break;
     case 'budget': {
       const budgetDay = ['0', '1', '2'].includes(id) ? Number(id) : day;
-      if (dialog.open && tab === 'budget' && budgetDay === day && !budgetOverview) {
+      if (dialog.open && tab === 'budget' && budgetDay === day) {
         routeDetail = undefined;
         dialog.close();
         break;

@@ -14,6 +14,24 @@
 .daily-split dt { color: #dbe5d9; font-size: .86rem; }
 .daily-split dd { margin: 3px 0 0; color: white; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
 .budget-cap { display: flex; justify-content: space-between; gap: 8px; margin: 8px 0 16px; padding: 10px 13px; border-radius: 9px; background: var(--sage); color: var(--forest-deep); font-size: .94rem; }
+.budget-categories { margin: 14px 0 18px; padding: 14px 16px 2px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.budget-categories h2 { margin: 0; font-size: 1.1rem; letter-spacing: -.035em; }
+.budget-categories > .budget-note { margin: 4px 0 10px; font-size: .875rem; }
+.budget-category { border-top: 1px solid var(--line); }
+.budget-category > summary { display: grid; grid-template-columns: max-content minmax(0,1fr) 8px; align-items: center; gap: 10px; min-height: 48px; padding: 8px 2px; cursor: pointer; list-style: none; }
+.budget-category > summary::-webkit-details-marker { display: none; }
+.budget-category > summary::after { content: ''; width: 7px; height: 7px; border: solid var(--muted); border-width: 0 1.5px 1.5px 0; transform: translateY(-2px) rotate(45deg); }
+.budget-category[open] > summary::after { transform: translateY(2px) rotate(225deg); }
+.category-amount { text-align: end; font-variant-numeric: tabular-nums; line-height: 1.45; }
+.category-amount b { font-size: 1rem; color: var(--forest-deep); }
+.category-amount small { display: block; color: var(--rust); font-size: .8125rem; }
+.currency-part { display: inline-block; white-space: nowrap; }
+.category-items { margin: 0 0 8px; padding: 1px 10px; list-style: none; border-radius: 8px; background: var(--paper); }
+.category-items li + li { border-top: 1px solid var(--line); }
+.category-items button { display: flex; justify-content: space-between; align-items: center; gap: 7px 10px; flex-wrap: wrap; width: 100%; min-height: 48px; padding: 7px 1px; border: 0; background: transparent; text-align: start; }
+.category-items button > span { flex: 1 1 8rem; font-size: .9375rem; }
+.category-items small { display: block; color: var(--muted); font-size: .8125rem; }
+.category-items button > b { margin-left: auto; font-size: .9rem; font-variant-numeric: tabular-nums; color: var(--forest); }
 .budget-overview { display: grid; gap: 12px; align-items: start; margin: 12px 0; }
 .budget-receipt, .budget-local { min-width: 0; padding: 14px 16px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
 .budget-page :is(.budget-receipt,.budget-local,.day-account) h2 { margin: 0 0 6px; color: var(--ink); font-size: 1.1rem; }
@@ -57,7 +75,7 @@
 .ledger-action > strong { font-size: .96rem; font-variant-numeric: tabular-nums; text-align: right; }
 .cost-state { font-size: .8rem; color: var(--muted); }
 .state-fixed, .state-paid { color: var(--forest); }
-.state-option, .state-unknown { color: var(--rust); }
+.state-option { color: var(--rust); }
 
 .food-decisions { margin: 10px 0 15px; }
 .food-decisions > summary { color: var(--forest); }
