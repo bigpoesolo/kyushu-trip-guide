@@ -10,8 +10,8 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=17">
-  <script type="module" src="./app.js?v=17"></script>
+  <link rel="stylesheet" href="./style.css?v=18">
+  <script type="module" src="./app.js?v=18"></script>
 </head>
 <body>
 <a class="skip-link" href="#view">일정 본문으로 이동</a>
@@ -44,6 +44,7 @@
   <symbol id="edit" viewBox="0 0 24 24"><path d="m5 19 4.4-.9 9.2-9.2a2.6 2.6 0 0 0-3.7-3.7l-9.2 9.2zM13.7 6.5l3.8 3.8"/></symbol>
   <symbol id="phone" viewBox="0 0 24 24"><path d="m7 3 3 5-2 2c1.5 3 3 4.5 6 6l2-2 5 3-1 4C10 22 2 14 3 4z"/></symbol>
   <symbol id="share" viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M5 12v8h14v-8"/></symbol>
+  <symbol id="wallet" viewBox="0 0 24 24"><path d="M4 7V5.8a1.8 1.8 0 0 1 1.5-1.7L17 2.8v4M19.5 7h-14A1.5 1.5 0 0 0 4 8.5v10A1.5 1.5 0 0 0 5.5 20h14a1 1 0 0 0 1-1v-3.5m0-4V8a1 1 0 0 0-1-1Z"/><path d="M21 11.5h-4a2 2 0 0 0 0 4h4z"/></symbol>
 </svg>
 
   <div class="shell">
@@ -53,6 +54,7 @@
         <button data-tab="schedule" type="button" aria-current="page"><svg aria-hidden="true"><use href="#calendar"/></svg><span>일정</span></button>
         <button data-tab="maps" type="button"><svg aria-hidden="true"><use href="#pin"/></svg><span>지도</span></button>
         <button data-tab="food" type="button"><svg aria-hidden="true"><use href="#food"/></svg><span>맛집</span></button>
+        <button data-tab="budget" type="button"><svg aria-hidden="true"><use href="#wallet"/></svg><span>예산</span></button>
         <button data-tab="mail" type="button"><svg aria-hidden="true"><use href="#mail"/></svg><span>예약·메일</span></button>
         <button data-tab="tasks" type="button"><svg aria-hidden="true"><use href="#checklist"/></svg><span>할 일</span><span id="task-count" class="count"></span></button>
       </nav>

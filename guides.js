@@ -71,9 +71,9 @@ export const guides = {
     related: ['late-snack'],
   },
   'walk-back': { origin: cafe, mode: 'walking', directions: '역 앞 관광안내센터의 짐 보관소로 돌아옵니다. 야식은 줄이 짧고 짐 회수에 여유가 있을 때만 사세요.', related: ['late-snack'] },
-  collect: { directions: '역 옆 관광안내센터 1층에서 짐을 찾고, 역 공중전화로 연락합니다.' },
-  'ryokan-ride': { origin: station, mode: 'driving', directions: '픽업은 역 옆 관광안내센터 안 짐 배송 카운터 근처에서 탑승합니다. 택시를 타면 지도 버튼에 있는 료칸 이름과 주소를 보여주세요.' },
-  ryokan: { links: [roomPhotos], related: ['late-snack'] },
+  collect: { directions: '역 옆 관광안내센터 1층에서 짐을 찾고, 17:00까지 역 공중전화로 료칸(0977-84-5565)에 픽업을 요청하세요.' },
+  'ryokan-ride': { origin: station, mode: 'driving', directions: '전화 접수 후 숙소에서 차량이 출발해요. 역 오른쪽 관광안내센터 안 짐 배송 카운터 근처에서 기다리세요. 픽업이 어려워 택시를 타면 지도 버튼에 있는 료칸 이름과 주소를 보여주세요.' },
+  ryokan: { links: [roomPhotos], related: ['sukiyaki', 'late-snack'] },
   bath: { links: [roomPhotos], related: ['late-snack'] },
   'late-snack': {
     links: [roomPhotos],
