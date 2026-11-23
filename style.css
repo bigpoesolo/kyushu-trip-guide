@@ -52,18 +52,14 @@ svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; s
 .count { display: grid; place-items: center; min-width: 21px; min-height: 20px; padding: 1px 5px; border-radius: 100px; background: #dce5d9; color: var(--forest); font-size: .66rem; line-height: 1; }
 .nav button[aria-current] .count { background: #547263; color: #fffdf5; }
 
-.trip-cover { display: grid; grid-template-columns: minmax(0, 1fr) 46%; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--forest-deep); color: #fffef4; }
-.cover-copy { position: relative; align-self: center; padding: clamp(24px,4vw,52px); }
-.cover-date { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0; color: #e5ebda; font-size: .94rem; font-weight: 600; }
-.cover-date span { padding: 1px 7px; border: 1px solid #b9c8ac; border-radius: 4px; color: #f2f7d7; }
-.cover-copy h1 { margin: 14px 0 20px; font-size: clamp(2rem,3.6vw,3.4rem); font-weight: 720; line-height: 1.16; letter-spacing: -.062em; text-wrap: balance; }
+.trip-cover { display: grid; grid-template-columns: minmax(0, 1fr) 35%; overflow: hidden; border-radius: 15px; background: var(--forest-deep); color: #fffef4; }
+.cover-copy { align-self: center; padding: 18px 26px; }
+.cover-copy h1 { margin: 0 0 4px; font-size: clamp(1.5rem,2.6vw,2.35rem); font-weight: 720; line-height: 1.22; letter-spacing: -.05em; }
 .cover-route { display: flex; align-items: center; gap: 7px; margin: 0; color: #e3ebde; font-size: .94rem; }
 .cover-route svg { width: 17px; height: 17px; }
 .cover-scene { position: relative; min-width: 0; min-height: 100%; background: #40594d; }
 .cover-scene img { display: block; position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: 50% 46%; }
 .trip-cover[data-day="0"] img { object-position: 60% 34%; }
-.cover-scene small { position: absolute; bottom: 6px; right: 7px; max-width: calc(100% - 14px); background: #14251eed; border-radius: 4px; padding: 2px 5px; color: white; font-size: .75rem; line-height: 1.35; }
-.cover-scene small a { color: inherit; text-underline-offset: 2px; }
 .text-button { border: 0; background: transparent; color: var(--forest); text-decoration: underline; text-underline-offset: 4px; min-height: 44px; font-size: .75rem; padding: 4px 0 4px 8px; }
 
 .section-head { margin: 0 0 17px; }
@@ -340,14 +336,11 @@ body:has(dialog[open]) { overflow: hidden; }
   .nav button[aria-current] { background: var(--sage); color: var(--forest-deep); }
   .nav .count { position: absolute; top: 0; right: 2px; min-height: 16px; min-width: 16px; padding: 2px 3px; border: 1px solid var(--surface); color: var(--forest-deep); font-size: .65rem; }
   .nav button > svg { width: 20px; height: 20px; }
-  .trip-cover { grid-template-columns: minmax(0,1fr) 39%; border-radius: 15px; }
-  .cover-copy { padding: 15px 12px 17px 17px; }
-  .cover-copy h1 { margin: 8px 0; font-size: clamp(1.45rem,6vw,2.1rem); }
-  .cover-date { font-size: .8125rem; gap: 4px 7px; }
-  .cover-date span { padding-inline: 4px; }
+  .trip-cover { grid-template-columns: minmax(0,1fr) 25%; border-radius: 12px; }
+  .cover-copy { padding: 11px 14px; }
+  .cover-copy h1 { font-size: clamp(1.17rem,5vw,1.45rem); }
   .cover-route { gap: 4px; font-size: .8125rem; line-height: 1.45; }
   .cover-route svg { width: 14px; height: 14px; }
-  .cover-scene small { bottom: 4px; right: 4px; max-width: calc(100% - 8px); font-size: .6875rem; }
   .section-head { margin-bottom: 12px; }
   .event { grid-template-columns: 57px 34px minmax(0, 1fr) 14px; gap: 8px; padding: 10px; }
   .event .mark { width: 34px; height: 34px; border-radius: 9px; }

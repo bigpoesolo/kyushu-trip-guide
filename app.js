@@ -1,7 +1,7 @@
-import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=19';
-import { eventPhotos, guides, photos } from './guides.js?v=19';
-import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=19';
-import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=19';
+import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=20';
+import { eventPhotos, guides, photos } from './guides.js?v=20';
+import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=20';
+import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=20';
 
 const view = document.querySelector('#view');
 const dialog = document.querySelector('#detail');
@@ -10,7 +10,7 @@ const notice = document.querySelector('#notice');
 const offlineState = document.querySelector('#offline-state');
 const shell = document.querySelector('.shell');
 const storageKey = 'fukuoka-trip-edits-v1';
-const appVersion = 'v19';
+const appVersion = 'v20';
 const events = Object.fromEntries(schedules.flatMap((list, day) => list.map(event => [event.id, { ...event, day }])));
 const mealEvents = Object.values(events).filter(event => event.meal);
 let saved = { events: {}, tasks: {} };
@@ -22,6 +22,7 @@ try {
 
 let tab = 'schedule';
 let day = 0;
+let budgetOverview = false;
 let area = '';
 let awardOnly = false;
 let genre = '';
@@ -82,15 +83,11 @@ const foodIcons = {
 };
 
 const tripDates = ['2026-12-05', '2026-12-06', '2026-12-07'];
-const dayHighlights = [
-  [['shiba', '카페 입장 기준', '15:50'], ['collect', '짐 회수·픽업 전화'], ['ryokan', '료칸 도착 목표']],
-  [['market-before', '마켓 구경'], ['mako-transit', '마코로 출발'], ['dinner', '마코 저녁 예약']],
-  [['airport-return', '호텔 출발 목표'], ['airport-arrival', '국제선 도착 목표'], ['flight-back', '귀국편 출발']],
-];
 const preparationSteps = new Set(['arrival', 'platform', 'walk-cafe', 'walk-back', 'ryokan-ride', 'bus-ready', 'snack', 'mako-ready', 'mako-return', 'depart']);
 
 function routeHash(modal = routeDetail) {
-  return `#${tab}/${day + 1}${modal ? `/${modal.kind}/${encodeURIComponent(modal.id)}${modal.from ? `/${encodeURIComponent(modal.from)}` : ''}` : ''}`;
+  const base = `#${tab}/${day + 1}${tab === 'budget' && budgetOverview ? '/overview' : ''}`;
+  return modal ? `${base}/${modal.kind}/${encodeURIComponent(modal.id)}${modal.from ? `/${encodeURIComponent(modal.from)}` : ''}` : base;
 }
 
 function syncRoute() {
@@ -107,8 +104,10 @@ function restoreRoute() {
   routeApplying = true;
   let parts;
   try { parts = window.location.hash.slice(1).split('/').map(decodeURIComponent); } catch { parts = []; }
-  const [nextTab, nextDay, kind, id, from] = parts;
+  const [nextTab, nextDay] = parts;
   tab = ['schedule', 'maps', 'food', 'budget', 'mail', 'tasks'].includes(nextTab) ? nextTab : 'schedule';
+  budgetOverview = tab === 'budget' && parts[2] === 'overview';
+  const [kind, id, from] = parts.slice(budgetOverview ? 3 : 2);
   const today = journeyClock().index;
   day = ['1', '2', '3'].includes(nextDay) ? Number(nextDay) - 1 : today < 0 ? 0 : today;
   routeDetail = undefined;
@@ -144,10 +143,29 @@ function nextScheduled(clock) {
 
 function renderJourneyFocus() {
   const clock = journeyClock();
-  const next = clock.index === day ? nextScheduled(clock) : undefined;
-  return `<section class="it-milestones" aria-label="놓치지 말아야 할 시각">
-    ${clock.index === day ? next ? `<button type="button" class="it-live" data-action="event" data-id="${next.id}"><span>현지 ${clock.time} · ${next.start <= clock.time ? '계획상 진행 중' : '다음 일정'}</span><strong>${escape(next.start)}　${escape(next.title)}</strong>${icon('chevron')}</button>` : '<p class="it-finished">오늘의 마지막 일정이 끝났어요.</p>' : ''}
-    <div class="it-stops">${dayHighlights[day].map(([id, label, cutoff]) => `<button type="button" data-action="event" data-id="${id}"><strong>${cutoff || escape(currentEvent(id).start)}</strong><span>${label}</span></button>`).join('')}</div></section>`;
+  const today = clock.index === day;
+  const next = today ? nextScheduled(clock) : undefined;
+  if (today && !next) return '<p class="it-finished">오늘의 마지막 일정이 끝났어요.</p>';
+
+  const item = next || currentEvent(['flight-out', 'taxi-am', 'airport-return'][day]);
+  const time = escape(item.start);
+  let note;
+  let title;
+  if (next) {
+    note = `현지 ${clock.time} · ${item.start <= clock.time ? '계획상 진행 중' : '다음 일정'}`;
+    if (item.id === 'taxi-am' && item.status === 'todo') note += ' · 배차 미확정';
+    title = item.title;
+  } else if (day === 0) {
+    note = `${currentEvent('bus-out').start} 유후인행 버스 · 환승 68분`;
+    title = '인천 출발';
+  } else if (day === 1) {
+    note = item.status === 'todo' ? '배차 미확정 · 료칸에 택시 요청' : statuses[item.status];
+    title = '료칸에서 택시 출발 목표';
+  } else {
+    note = '국제선 10:15~10:30 도착 목표';
+    title = '호텔에서 공항으로 출발 목표';
+  }
+  return `<button type="button" class="it-priority" data-action="event" data-id="${item.id}"><strong class="it-priority-time">${time}</strong><span><strong>${escape(title)}</strong><small>${escape(note)}</small></span>${icon('chevron')}</button>`;
 }
 
 function notify(message) {
@@ -201,34 +219,43 @@ function scheduleCost(id) {
   return eventBudgetLabel(id).split(' · ').map(part => `<span>${escape(part)}</span>`).join(' ');
 }
 
+function scheduleRow(item) {
+  const pending = { early: '료칸과 협의 필요', 'taxi-am': '배차 미확정', 'airport-return': '이동수단 미정' };
+  const state = item.selected ? '내 선택' : item.status === 'todo' ? pending[item.id] || '미확정' : item.status === 'plan' ? '' : statuses[item.status];
+  const choice = item.selected && !item.title.includes(foods[item.selected].name) ? foods[item.selected].name : '';
+  const note = choice || item.deadline || (fullSchedule ? item.subtitle : '');
+  const end = item.timeLabel ? item.timeLabel.replace(`${item.start} `, '') : fullSchedule && item.end ? '– ' + item.end : '';
+  // Shared charges and complimentary steps remain available in each event's expense detail.
+  const cost = eventBudgetLabel(item.id);
+  const amount = /[¥$]/.test(cost) ? cost.split(' · ')[0] : item.id.startsWith('flight-') ? '항공권 금액 미확인' : '';
+  return `<li><button class="it-stop it-${item.status}" type="button" data-action="event" data-id="${item.id}">
+    <span class="it-time"><strong>${escape(item.start)}</strong>${end ? `<small>${escape(end)}</small>` : ''}</span>
+    <span class="it-entry"><strong>${escape(item.title)}</strong>${state || note || amount ? `<small class="it-row-info">${[state && `<span class="it-status">${escape(state)}</span>`, note && escape(note), amount && escape(amount)].filter(Boolean).join(' · ')}</small>` : ''}</span>${icon('chevron')}</button></li>`;
+}
+
 function renderSchedule() {
-  const info = days[day];
-  const [warningEvent, warningTitle, warningText] = info.warning;
-  const event = currentEvent(warningEvent);
-  const warning = warningEvent === 'taxi-am' && event.status !== 'todo' ? [statuses[event.status], event.title] : [warningTitle, warningText];
   const allEvents = schedules[day].map(item => currentEvent(item.id)).sort((a, b) => a.start.localeCompare(b.start));
   const timeline = allEvents.filter(item => fullSchedule || !preparationSteps.has(item.id));
+  const periods = [
+    { id: 'morning', name: '오전', items: timeline.filter(e => e.start < '12:00') },
+    { id: 'afternoon', name: '오후', items: timeline.filter(e => e.start >= '12:00' && e.start < '17:00') },
+    { id: 'evening', name: '저녁', items: timeline.filter(e => e.start >= '17:00') },
+  ].filter(period => period.items.length);
+
+  const hotel = currentEvent('ryokan');
+  const highlight = day === 0 ? ['shiba', '15:50 카페 입장 기준', `${timeText(hotel)} 료칸 도착 목표`]
+    : day === 1 ? ['dinner', `${currentEvent('mako-transit').start} 마코로 출발`, `${currentEvent('dinner').start} 저녁 예약`]
+    : ['flight-back', `${currentEvent('flight-back').start} 귀국편 출발`, '후쿠오카 국제선 · 제주항공'];
   return `<div class="it-days" role="group" aria-label="여행 날짜 선택">${days.map((item, index) => `<button type="button" data-action="day" data-id="${index}" aria-pressed="${index === day}"><strong>${item.date}</strong><span>${item.short}</span></button>`).join('')}</div>
-    <div id="journey-focus">${renderJourneyFocus()}</div>
-    <div class="it-layout">
-    <aside class="it-aside" aria-label="당일 참고">
-      <button type="button" class="it-reminder" data-action="event" data-id="${warningEvent}">${icon('clock')}<span><strong>${escape(warning[0])}</strong><small>${escape(warning[1])}</small></span></button>
-      <button type="button" class="it-budget" data-action="budget" data-id="${day}">${icon('wallet')}<span><small>현지 예산 · 2인</small><strong>${escape(dailyBudgetLabel(day))}</strong></span></button>
-      <details class="it-shortcuts"><summary>이날의 바로가기</summary><div class="toolbar">
-        ${day === 0 ? `${action('유후인 간식 고르기', 'event', 'shopping', '', 'coffee')}${action('체크인 먼저 대안', 'checkin-first', '', '', 'route')}` : day === 1 ? `${action('우동 점심 고르기', 'event', 'lunch', '', 'bowl')}${action('마코 지하철 경로', 'event', 'mako-transit', '', 'route')}` : `${action('공항 이동 대안', 'event', 'airport-return', '', 'route')}${action('예약·관련 메일', 'mailbox', '', '', 'mail')}`}
-      </div></details>
-    </aside>
-    <section class="it-agenda" aria-labelledby="it-agenda-title"><div class="it-agenda-head"><h2 id="it-agenda-title">시간별 일정</h2><button class="it-toggle" type="button" data-action="timeline-mode" aria-pressed="${fullSchedule}">${fullSchedule ? '핵심만 보기' : `이동·준비 포함 전체 ${allEvents.length}개`}</button></div>
-    <ol class="it-timeline">${timeline.map(item => {
-      const status = item.candidates && item.selected ? '내 선택' : item.status !== 'plan' ? statuses[item.status] : item.candidates ? `후보 ${item.candidates.length}곳` : '';
-      const sub = item.selected ? (item.title.includes(foods[item.selected].name) ? '' : foods[item.selected].name)
-        : item.deadline || (['sukiyaki', 'dinner'].includes(item.id) ? '' : item.subtitle);
-      const end = item.timeLabel ? item.timeLabel.replace(`${item.start} `, '') : item.end ? `– ${item.end}${item.id === 'dinner' ? ' 예상' : ''}` : '';
-      return `<li><button class="it-stop it-${item.status}" type="button" data-action="event" data-id="${item.id}">
-        <span class="it-time"><strong>${escape(item.start)}</strong>${end ? `<small>${escape(end)}</small>` : ''}</span>
-        <span class="it-entry"><span class="it-entry-head"><strong>${escape(item.title)}</strong>${status ? `<span class="it-status">${escape(status)}</span>` : ''}</span>${sub && sub !== item.title ? `<span class="it-sub${item.deadline ? ' it-deadline' : ''}">${escape(sub)}</span>` : ''}<span class="it-cost">${scheduleCost(item.id)}</span></span>
-      </button></li>`;
-    }).join('')}</ol></section></div>`;
+    <div class="it-overview"><div id="journey-focus">${renderJourneyFocus()}</div>
+      <div class="it-summary"><button class="it-booking-jump" type="button" data-action="event" data-id="${highlight[0]}"><strong>${escape(highlight[1])}</strong><span>${escape(highlight[2])}</span>${icon('chevron')}</button>
+      <button type="button" class="it-budget" data-action="budget" data-id="${day}"><span>현지 예산 · 두 사람</span><strong>${escape(dailyBudgetLabel(day))}</strong>${icon('chevron')}</button></div></div>
+    <section class="it-agenda" aria-label="시간별 일정"><div class="it-agenda-head">
+      <div class="it-period-nav" role="group" aria-label="시간대로 이동">${periods.map(p => `<button type="button" data-action="period-jump" data-id="${p.id}" aria-label="${p.name} 첫 일정으로 이동">${p.name}</button>`).join('')}</div>
+      <button class="it-toggle" type="button" data-action="timeline-mode" aria-pressed="${fullSchedule}" aria-label="${fullSchedule ? '핵심만 보기' : `이동·준비 포함 전체 ${allEvents.length}개 보기`}">${fullSchedule ? '핵심만 보기' : '세부 이동 보기'}</button></div>
+      ${periods.map((p, index) => `<section id="period-${p.id}" class="it-period" aria-labelledby="it-label-${p.id}"><h2 id="it-label-${p.id}"${index === 0 ? ' class="sr-only"' : ''}>${p.name} 일정</h2><ol class="it-timeline">${p.items.map(scheduleRow).join('')}</ol></section>`).join('')}
+    </section>
+    <div class="it-links toolbar">${day === 0 ? `${action('유후인 간식 고르기', 'event', 'shopping', '', 'coffee')}${action('체크인 먼저 대안', 'checkin-first', '', '', 'route')}` : day === 1 ? `${action('우동 점심 고르기', 'event', 'lunch', '', 'bowl')}${action('마코 지하철 경로', 'event', 'mako-transit', '', 'route')}` : `${action('공항 이동 대안', 'event', 'airport-return', '', 'route')}${action('예약·관련 메일', 'mailbox', '', '', 'mail')}`}</div>`;
 }
 
 function renderFood() {
@@ -325,24 +352,22 @@ function renderCover() {
   cover.hidden = tab !== 'schedule';
   if (cover.hidden || cover.dataset.day === String(day)) return;
   const photo = [photos.yufuin, photos.market, photos.airport][day];
-  const date = ['12월 5일 토요일', '12월 6일 일요일', '12월 7일 월요일'][day];
   const route = ['인천 · 후쿠오카공항 · 유후인', '유후인 · 하카타 · 야쿠인', '하카타 · 후쿠오카공항 · 인천'][day];
-  const credit = photo.source ? `<a href="${photo.source}" target="_blank" rel="noopener noreferrer">${photo.author}</a>${photo.licenseUrl ? ` · <a href="${photo.licenseUrl}" target="_blank" rel="noopener noreferrer">${photo.license}</a>` : ''}` : '유후인 겨울 풍경 · 생성 이미지';
   cover.dataset.day = String(day);
-  cover.innerHTML = `<div class="cover-copy"><p class="cover-date"><span>${day + 1}일차</span><time datetime="${tripDates[day]}">${date}</time></p><h1>${days[day].title}</h1><p class="cover-route">${icon('route')}${route}</p></div><div class="cover-scene"><img src="./${photo.file}" alt="" fetchpriority="high"><small>${credit}</small></div>`;
+  cover.innerHTML = `<div class="cover-copy"><h1>${days[day].title}</h1><p class="cover-route">${route}</p></div><div class="cover-scene"><img src="./${photo.file}" alt="" fetchpriority="high"></div>`;
 }
 
 function render() {
   shell.dataset.tab = tab;
   renderCover();
-  document.title = `${({ schedule: days[day].date + ' 일정', maps: '우리 여행 장소', food: '맛집과 간식', budget: days[day].date + ' 예산', mail: '예약·메일', tasks: '출발 전 할 일' })[tab]} · 규슈 여행 노트`;
+  document.title = `${({ schedule: days[day].date + ' 일정', maps: '우리 여행 장소', food: '맛집과 간식', budget: budgetOverview ? '전체 여행 예산' : days[day].date + ' 예산', mail: '예약·메일', tasks: '출발 전 할 일' })[tab]} · 규슈 여행 노트`;
   document.querySelector('#task-count').textContent = tasks.filter(task => !saved.tasks[task.id]).length;
   for (const button of document.querySelectorAll('button[data-tab]')) {
     if (button.dataset.tab === tab) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
   }
-  const renderTab = { schedule: renderSchedule, maps: renderMaps, food: renderFood, budget: renderBudget, mail: renderMails, tasks: renderTasks };
-  view.innerHTML = renderTab[tab](day);
+  const renderTab = { schedule: renderSchedule, maps: renderMaps, food: renderFood, mail: renderMails, tasks: renderTasks };
+  view.innerHTML = tab === 'budget' ? renderBudget(day, budgetOverview) : renderTab[tab](day);
 }
 
 function detailHeading(label, title, symbol) {
@@ -377,8 +402,19 @@ async function copyText(text) {
   }
 }
 
+const isMakoVisit = id => ['dinner', 'mako-transit', 'mako-ready'].includes(id);
+
+function visitTimings(event) {
+  const id = event.id;
+  if (isMakoVisit(id)) return [['마켓 출발', currentEvent('mako-transit').start], ['도착 목표', '17:45~17:50'], ['저녁 예약', currentEvent('dinner').start]];
+  if (id === 'shiba') return [['입장 판단', '15:50까지'], ['역으로 출발', '16:20까지']];
+  if (id === 'ryokan') return [['도착 목표', timeText(event)], ['체크인 마감', '17:30']];
+  if (id === 'airport-return') return [['호텔 출발 목표', event.start], ['국제선 도착 목표', '10:15~10:30']];
+  return [];
+}
+
 function criticalGuide(id) {
-  if (['dinner', 'mako-transit', 'mako-ready'].includes(id)) return `<section class="critical-guide"><strong>18:00 예약 · 17:45~17:50 도착 목표</strong><ol><li><b>17:05</b> 하카타역 마켓 출발 <small>호텔 직행이면 17:15 출발</small></li><li><b>나나쿠마선 · 하시모토 방면</b> 하카타 N18 → 야쿠인오도리 N13 <small>환승 없이 5정거장 · 약 8~9분 · 1인 ¥260</small></li><li><b>야쿠인오도리역 1번 출구</b> 도보 약 3분 · 건물 2층 <small>야쿠인역보다 한 정거장 더 가요.</small></li></ol>${phoneLink('092-214-7053', '마코 전화')}</section>`;
+  if (isMakoVisit(id)) return fold('지하철 타는 법·마코 전화', `<p>하카타역에서 나나쿠마선 하시모토 방면을 타고 야쿠인오도리역 1번 출구에서 내려요. 환승 없이 5정거장(약 8~9분), 1인 ¥260이에요. 출구에서 약 3분 걸으면 건물 2층에 마코가 있어요.</p><p>호텔에서 바로 가면 17:15 출발을 목표로 해요. 식사 종료는 20:30 예상이에요.</p>${phoneLink('092-214-7053', '마코 전화')}`);
   if (['collect', 'ryokan-ride', 'ryokan'].includes(id)) return `<section class="critical-guide"><strong>17:00~17:10 도착 목표 · 체크인 17:30 마감</strong><ol><li><b>16:40</b> 관광안내센터에서 짐 찾기</li><li><b>역 공중전화</b> 짐을 찾고 료칸 픽업 요청 <small>접수 17:00까지 · 일본 동전 준비</small></li><li><b>연결·픽업이 안 되면 택시</b> 기다리느라 체크인에 늦지 않게 이동</li></ol>${phoneLink('0977-84-5565', '료칸 전화')}</section>`;
   if (['market-before', 'market'].includes(id)) return `<section class="critical-guide"><strong>우리 여행의 메인 · 하카타역 서쪽 광장</strong><p>일요일 12:00~23:00 · 마지막 주문 22:45 · 입장 무료<br>외부 음식·음료 반입 불가. 밤 구경은 식사 후 다시 와요.</p>${action('17:05 마코로 가는 길', 'event', 'mako-transit', '', 'route')}</section>`;
   if (id === 'night-food') return `<section class="critical-guide"><strong>20:55 도착 목표 · 야식은 선택</strong><p>공식 마감 21:30. 마지막 주문 시각은 미공개예요. 마코가 늦어지거나 배부르면 생략하고 마켓으로 가요.</p>${action('야식 생략 → 밤 마켓', 'event', 'market', '', 'sparkle')}</section>`;
@@ -444,14 +480,17 @@ function showEvent(id, backTask) {
     </form></details>`;
   const cover = photos[foods[event.selected]?.photo] || (id === 'lunch' ? { ...photos['food-daichi'], caption: `점심 후보 · ${photos['food-daichi'].caption}` } : eventPhotos[id]) || photos.yufuin;
   const route = criticalGuide(id);
+  const timings = visitTimings(event);
   const mails = travelMails.filter(mail => mail.events.includes(id));
   showDetail(`<article class="it-detail">
     ${backTask ? action('할 일로 돌아가기', 'task', backTask) : ''}
-    ${detailPhoto(cover)}
-    <header class="it-detail-head"><p><span>${days[event.day].date}</span><strong>${escape(timeText(event))}</strong></p>
+    <div class="visit-lead"><header class="it-detail-head"><p><span>${days[event.day].date}</span>${badge(id === 'dinner' ? '2인 예약 확정' : statuses[event.status], event.status)}</p>
       <h2 id="detail-title">${escape(event.title)}</h2>
-      <div class="chips">${badge(statuses[event.status], event.status)}${event.deadline ? badge(event.deadline, 'deadline') : ''}</div>
-      ${event.subtitle ? `<p class="it-detail-sub">${escape(event.subtitle)}</p>` : ''}</header>
+      ${timings.length ? '' : `<p class="visit-time">${escape(timeText(event))}</p>`}</header>
+      <details class="visit-photo"><summary aria-label="장소 사진과 출처"><img src="./${cover.file}" alt=""><span>사진</span></summary>${detailPhoto(cover)}</details></div>
+    ${timings.length ? `<dl class="visit-times">${timings.map(([label, value]) => `<div><dt>${label}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>` : ''}
+    ${(id === 'dinner' || id === 'mako-transit') ? '<p class="visit-hint">포르자에서 바로 가면 17:15 출발 목표</p>' : ''}
+    ${!timings.length && (event.deadline || event.subtitle) ? `<p class="it-detail-sub">${escape(event.deadline || event.subtitle)}</p>` : ''}
     ${destinationActions(destination, guide.origin, guide.mode)}
     <details class="it-expense"${tab === 'budget' ? ' open' : ''}><summary><span>두 사람 비용</span><strong class="it-cost">${scheduleCost(id)}</strong></summary>
       ${eventBudgetDetails(id)}
@@ -464,7 +503,7 @@ function showEvent(id, backTask) {
       ${guide.directions ? (route ? fold('이동 설명 전체 보기', `<p>${escape(guide.directions)}</p>`) : `<p>${escape(guide.directions)}</p>`) : ''}${destination ? `<p class="meta" lang="ja">${escape(destination)}</p>` : ''}
       <div class="links">${destination ? mapLink(destination, '장소·사진 열기') : ''}${event.food ? action('식당 메뉴·사진', 'food', event.food, '', 'food') : ''}</div></section>` : ''}
     ${guideDetails(id, { ...guide, food: event.candidates ? undefined : guide.food })}
-    ${event.detail ? fold('현장 참고·확인 근거', `<p>${escape(event.detail)}</p>`) : ''}
+    ${event.detail || event.subtitle ? fold('현장 참고·확인 근거', `${timings.length ? `<p>일정표 시각 · ${escape(timeText(event))}</p>` : ''}${event.subtitle ? `<p>${escape(event.subtitle)}</p>` : ''}${event.detail ? `<p>${escape(event.detail)}</p>` : ''}`) : ''}
     ${event.fallback ? `<section class="detail-section fallback"><h3>${icon('route')}${escape(event.fallback[0])}</h3><p>${escape(event.fallback[1])}</p></section>` : ''}
     ${sources.length ? fold('공식 안내·참고 링크', `<div class="links">${sources.map(([label, url]) => link(label, url)).join('')}</div>`) : ''}
     ${guide.related || event.area ? fold('이어서 볼 일정·주변 맛집', `<div class="links">${(guide.related || []).map(related => action(events[related].title, 'event', related, '', eventIcons[related])).join('')}${event.area ? action('주변 맛집·백명점', 'nearby', event.area, '', 'pin') : ''}</div>`) : ''}
@@ -507,7 +546,8 @@ function showAppHelp() {
     <section class="detail-section"><h3>두 휴대폰에서 보는 내용</h3><p>공통 일정·예약·장소는 같은 링크로 열면 같아요. 식당 선택, 개인 메모, 할 일 체크는 지금 쓰는 기기와 브라우저에만 저장됩니다. 다른 기기나 다른 주소로 열면 자동으로 합쳐지지 않아요.</p></section>
     <section class="detail-section"><h3>인터넷이 없을 때</h3><p>한 번 열어 「오프라인 열람 준비 완료」가 표시되면 일정·사진·일본어 주소를 다시 볼 수 있어요. Google Maps 길찾기, 예약 사이트와 Gmail 원문에는 인터넷이 필요합니다.</p></section>
     <section class="detail-section"><h3>메일과 Google Maps</h3><p>예약 탭은 확인한 메일의 요약이에요. Gmail 새 메일을 자동으로 가져오지는 않으며, 원문 버튼은 각자 로그인한 계정에서 검색합니다. 지도 저장 버튼을 누른 뒤 Google Maps의 「저장」을 눌러 주세요.</p></section>
-    <p class="meta">공유 버튼은 현재 화면의 링크를 보내요. 개인 메모와 기기에서 고른 식당은 링크에 포함하지 않아요.</p>`);
+    <p class="meta">공유 버튼은 현재 화면의 링크를 보내요. 개인 메모와 기기에서 고른 식당은 링크에 포함하지 않아요.</p>
+    ${fold('날짜별 표지 사진 출처', [photos.yufuin, photos.market, photos.airport].map(detailPhoto).join(''))}`);
 }
 
 document.addEventListener('click', event => {
@@ -516,6 +556,7 @@ document.addEventListener('click', event => {
   if (!button) return;
   const { action: name, id, tab: nextTab } = button.dataset;
   if (nextTab) {
+    if (nextTab !== tab) budgetOverview = false;
     tab = nextTab;
     routeDetail = undefined;
     syncRoute();
@@ -532,26 +573,41 @@ document.addEventListener('click', event => {
     case 'food-scope': foodScope = id; render(); view.querySelector(`[data-action=food-scope][data-id=${id}]`).focus({ preventScroll: true }); break;
     case 'food-reset': foodQuery = ''; area = ''; genre = ''; awardOnly = false; render(); view.querySelector('#food-search').focus(); break;
     case 'timeline-mode': fullSchedule = !fullSchedule; render(); view.querySelector('[data-action=timeline-mode]').focus({ preventScroll: true }); break;
+    case 'period-jump': {
+      if (!['morning', 'afternoon', 'evening'].includes(id)) break;
+      const stop = view.querySelector(`#period-${id} .it-stop`);
+      if (stop) { stop.focus({ preventScroll: true }); stop.scrollIntoView({ block: 'start' }); }
+      break;
+    }
+    case 'budget-overview':
+      budgetOverview = true;
+      routeDetail = undefined;
+      render();
+      view.querySelector('[data-action="budget-overview"]').focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+      break;
     case 'budget': {
       const budgetDay = ['0', '1', '2'].includes(id) ? Number(id) : day;
-      if (dialog.open && tab === 'budget' && budgetDay === day) {
+      if (dialog.open && tab === 'budget' && budgetDay === day && !budgetOverview) {
         routeDetail = undefined;
         dialog.close();
         break;
       }
       tab = 'budget';
+      budgetOverview = false;
       day = budgetDay;
       routeDetail = undefined;
       if (dialog.open) dialog.close();
       render();
       const dayButton = view.querySelector(`[data-action="budget-day"][data-id="${day}"]`);
       dayButton.focus({ preventScroll: true });
-      dayButton.scrollIntoView?.({ block: 'center' });
+      window.scrollTo(0, 0);
       break;
     }
     case 'budget-day':
     case 'day': {
       const scrolledPastHeader = view.getBoundingClientRect().top < 0;
+      budgetOverview = false;
       day = Number(id);
       routeDetail = undefined;
       render();
