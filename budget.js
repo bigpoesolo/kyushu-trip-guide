@@ -1,6 +1,10 @@
 // One entry per expense. Shared rides, day passes and return tickets are counted once.
 const dates = ['12/5 토', '12/6 일', '12/7 월'];
 const places = ['유후인', '하카타', '귀국'];
+// KB indicative rates on Nov 23, quoted in won per unit of currency.
+const wonPerYen = 846.12 / 100;
+const wonPerDollar = 1343.80;
+export const forzaRoomYen = Math.round(157.34 * wonPerDollar / wonPerYen);
 const kinds = {
   paid: '카드 결제 완료', online: '온라인 카드 지정', scheduled: '자동 결제 예정',
   fixed: '현지 결제 확정', base: '기본 예산', option: '선택 지출',
@@ -32,7 +36,7 @@ const ledger = [
     { event: 'taxi-am', category: 'transport', title: '료칸 → 버스센터 아침 택시', kind: 'base', min: 1000, max: 2000, note: '택시 한 대 기준 계획액. 07:20 배차·금액은 미확정이에요.' },
     { event: 'brunch', category: 'food', title: '하카타역 브런치', kind: 'base', min: 1000, max: 2200, note: '빵·커피로 가볍게 먹는 2인 예산이에요.' },
     { event: 'lunch', category: 'food', title: '우동 점심', kind: 'base', min: 1600, max: 3000, note: '우동 두 그릇과 토핑 예산. 가게·주문이 정해지면 실제 금액이 달라져요.' },
-    { event: 'hakata-hotel', category: 'stay', title: '포르자 하카타구치 객실', kind: 'scheduled', min: 157.34, currency: 'USD', mail: 'agoda-hotel', note: '세금·봉사료 포함 예약 기준액. 12/1 자동 결제 시 아고다 환율·5% 조정 조건이 적용돼 최종 원화 청구액은 미확정이에요.' },
+    { event: 'hakata-hotel', category: 'stay', title: '포르자 하카타구치 객실', kind: 'scheduled', min: forzaRoomYen, estimated: true, mail: 'agoda-hotel', note: '세금·봉사료를 포함한 객실료를 11/23 기준 엔화로 환산했어요. 12/1 자동 결제 시 아고다 환율·5% 조정 조건에 따라 실제 청구액이 달라져요.' },
     { event: 'hakata-hotel', category: 'stay', title: '포르자 현지 숙박세', kind: 'fixed', min: 400, mail: 'agoda-hotel', note: '2인 합계. 객실 예약 기준액과 별도로 현지에서 내요.' },
     { event: 'market-before', category: 'activities', title: '크리스마스마켓 먹거리·소품', kind: 'option', min: 500, max: 3000, source: 'market', note: '입장·일루미네이션 관람은 무료. 오후와 밤 두 번 방문해도 하루 구매 예산 한 번만 잡아요.' },
     { event: 'mako-transit', category: 'transport', title: '하카타 → 야쿠인오도리 지하철', kind: 'base', min: 520, source: 'subway', note: '마코로 갈 때 1인 ¥260 × 2. 도보 구간은 무료예요.' },
@@ -49,9 +53,9 @@ const ledger = [
 ];
 
 const yen = n => '¥' + n.toLocaleString('en-US');
-const usd = n => 'US$' + n.toFixed(2);
 const range = (min, max) => min === max ? yen(min) : yen(min) + '–' + yen(max);
-const money = r => r.currency === 'USD' ? usd(r.min) : range(r.min, r.max ?? r.min);
+const money = r => (r.estimated ? '약 ' : '') + range(r.min, r.max ?? r.min);
+const approxManWon = jpy => (Math.round(jpy * wonPerYen / 1000) / 10).toLocaleString('ko-KR');
 const sum = (list, fn) => list.reduce((s, item) => s + fn(item), 0);
 const subtotal = (rows, kind, high = false) => sum(rows.filter(r => r.kind === kind), r => high ? (r.max ?? r.min) : r.min);
 
@@ -60,46 +64,41 @@ export const budgetDays = ledger.map(rows => {
   const min = fixed + subtotal(rows, 'base');
   const max = fixed + subtotal(rows, 'base', true);
   const options = subtotal(rows, 'option', true);
-  return {fixed, min, max, options, limit: max + options};
+  const booked = subtotal(rows, 'paid') + subtotal(rows, 'online') + subtotal(rows, 'scheduled');
+  return {fixed, min, max, options, limit: max + options, booked, totalMin: booked + min, totalMax: booked + max};
 });
 const rows = ledger.flat();
 const paid = subtotal(rows, 'paid');
 const online = subtotal(rows, 'online');
 const scheduled = subtotal(rows, 'scheduled');
 const localFixed = subtotal(rows, 'fixed');
-const confirmedYen = paid + online + localFixed;
+const totalMin = sum(budgetDays, d => d.totalMin);
+const totalMax = sum(budgetDays, d => d.totalMax);
 const localMin = sum(budgetDays, d => d.min);
 const localMax = sum(budgetDays, d => d.max);
-const localLimit = sum(budgetDays, d => d.limit);
-// KB indicative rates displayed by KITA on Nov 23. Keep separate from actual card charges.
-const approxWon = (jpy, dollars = 0) => (Math.round((jpy * 8.4612 + dollars * 1343.8) / 1000) / 10).toLocaleString('ko-KR') + '만 원';
+const optionalMax = sum(budgetDays, d => d.options);
 
 const categoryLabels = { transport: '교통비', food: '식비', stay: '숙박비', activities: '체험·쇼핑', other: '기타' };
 export function categoryBudgets(day) {
-  const entries = day === undefined ? rows : ledger[day].filter(r => ['fixed', 'base', 'option'].includes(r.kind));
+  const entries = day === undefined ? rows : ledger[day];
   return Object.entries(categoryLabels).map(([id, label]) => {
     const items = entries.filter(r => r.category === id);
     const base = items.filter(r => r.kind !== 'option');
-    const yenEntries = base.filter(r => r.currency !== 'USD');
     return {
       id, label, entries: items,
-      min: sum(yenEntries, r => r.min),
-      max: sum(yenEntries, r => r.max ?? r.min),
-      usd: sum(base.filter(r => r.currency === 'USD'), r => r.min),
+      min: sum(base, r => r.min),
+      max: sum(base, r => r.max ?? r.min),
       options: subtotal(items, 'option', true),
     };
   }).filter(group => group.entries.length);
 }
 
 function categorySection(day) {
-  const scope = day === undefined ? '사전 결제·예약분과 현지 지출을 합한 2인 기본 예산이에요.' : '이날 현지에서 낼 2인 기본 예산이에요. 선결제 버스와 객실료는 전체에서 볼 수 있어요.';
+  const scope = day === undefined ? '3일 총예산을 용도별로 나눴어요.' : '이날 총예산을 용도별로 나눴어요.';
   const groups = categoryBudgets(day).map(group => {
-    const amounts = [];
-    if (group.max) amounts.push(range(group.min, group.max));
-    if (group.usd) amounts.push(usd(group.usd));
-    const base = amounts.map((amount, i) => `<span class="currency-part">${i ? '+ ' : ''}${amount}</span>`).join(' ');
+    const base = group.max ? range(group.min, group.max) : '선택 지출만';
     const items = group.entries.map(r => `<li><button type="button" data-action="event" data-id="${r.event}"><span>${r.title}<small>${kinds[r.kind]}</small></span><b>${money(r)}</b></button></li>`).join('');
-    return `<details class="budget-category" data-category="${group.id}"><summary><strong>${group.label}</strong><span class="category-amount"><b>${base || '선택 지출만'}</b>${group.options ? `<small>선택 시 최대 +${yen(group.options)}</small>` : ''}</span></summary><ul class="category-items">${items}</ul></details>`;
+    return `<details class="budget-category" data-category="${group.id}"><summary><strong>${group.label}</strong><span class="category-amount"><b>${base}</b>${group.options ? `<small>선택 시 최대 +${yen(group.options)}</small>` : ''}</span></summary><ul class="category-items">${items}</ul></details>`;
   }).join('');
   return `<section class="budget-categories"><h2>분야별 예산</h2><p class="budget-note">${scope}</p>${groups}</section>`;
 }
@@ -156,29 +155,29 @@ function ledgerGroup(title, entries, expanded = false) {
 function dayBudget(day) {
   const b = budgetDays[day];
   const entries = ledger[day];
-  return `<section class="budget-hero"><h2>${dates[day]} 현지 기본 예산</h2><strong class="budget-total">${dailyBudgetLabel(day)}</strong>
-    <p>약 ${approxWon(b.min)}~${approxWon(b.max)} · 카드와 현금 합계</p>
-    <dl class="daily-split"><div><dt>현지 결제 확정</dt><dd>${yen(b.fixed)}</dd></div><div><dt>식비·이동 등 예상</dt><dd>${range(b.min - b.fixed, b.max - b.fixed)}</dd></div></dl></section>
-    <p class="budget-cap"><span>선택 일정까지 이용하면</span><strong>최대 ${yen(b.limit)}</strong></p>
-    ${categorySection(day)}
+  const context = ['왕복버스와 료칸 객실료를 포함해요.', '포르자 객실료는 11/23 기준 엔화 환산액이에요.', '하카타 아침 식사와 공항까지의 이동비예요.'];
+  return `<section class="budget-hero"><h2>${dates[day]} 총예산</h2><strong class="budget-total">${range(b.totalMin, b.totalMax)}</strong>
+    <p>${context[day]}</p>
+    <dl class="daily-split"><div><dt>현지에서 쓸 돈</dt><dd>${dailyBudgetLabel(day)}</dd></div><div><dt>사전 결제·예약분</dt><dd>${yen(b.booked)}</dd></div></dl></section>
+    <p class="budget-cap"><span>선택 지출 포함 총예산</span><strong>최대 ${yen(b.totalMax + b.options)}</strong></p>
     <section class="day-account"><h2>${dates[day]} 지출 내역</h2>
-    ${ledgerGroup('현지 기본 일정', entries.filter(r => ['fixed', 'base'].includes(r.kind)), true)}
+    ${ledgerGroup(b.fixed ? '현지 기본 일정 · 확정 ' + yen(b.fixed) : '현지 기본 일정', entries.filter(r => ['fixed', 'base'].includes(r.kind)), true)}
     ${ledgerGroup('선택 지출 · 최대 ' + yen(b.options), entries.filter(r => r.kind === 'option'))}
-    ${ledgerGroup('사전 결제·예약', entries.filter(r => ['online', 'paid', 'scheduled'].includes(r.kind)))}</section>`;
+    ${ledgerGroup('사전 결제·예약', entries.filter(r => ['online', 'paid', 'scheduled'].includes(r.kind)))}</section>
+    ${categorySection(day)}`;
 }
 function tripBudget() {
-  const onlineYen = paid + online;
-  const dailyRows = budgetDays.map((d, i) => `<li><button type="button" data-action="budget" data-id="${i}"><span>${dates[i]} <small>${places[i]}</small></span><b>${range(d.min, d.max)}</b><svg aria-hidden="true"><use href="#chevron"/></svg></button></li>`).join('');
-  return `<section class="budget-hero"><h2>여행 전체 예상액</h2><strong class="budget-total">약 ${approxWon(onlineYen + localMin, scheduled)}~${approxWon(onlineYen + localMax, scheduled)}</strong><p>${range(onlineYen + localMin, onlineYen + localMax)} + ${usd(scheduled)}</p></section>
-    ${categorySection()}
-    <div class="budget-overview"><section class="budget-receipt"><h2>예약 금액과 결제 상태</h2><p class="booking-amount">${yen(confirmedYen)} + ${usd(scheduled)} <small>약 ${approxWon(confirmedYen, scheduled)}</small></p>
+  const dailyRows = budgetDays.map((d, i) => `<li><button type="button" data-action="budget" data-id="${i}"><span class="budget-date">${dates[i]}<small>${places[i]}</small></span><span class="budget-day-amount"><b>${range(d.totalMin, d.totalMax)}</b><small>현지 ${dailyBudgetLabel(i)}</small></span><svg aria-hidden="true"><use href="#chevron"/></svg></button></li>`).join('');
+  return `<section class="budget-daily"><h2>일자별 총예산</h2><p class="budget-note">숙박·교통 예약분 포함 · 선택 지출 별도</p><ul class="budget-date-list">${dailyRows}</ul><div class="budget-trip-total"><strong>3일 합계</strong><b>${range(totalMin, totalMax)}</b></div></section>
+    <section class="budget-receipt"><h2>예약 금액과 결제 상태</h2><p class="booking-amount">약 ${yen(paid + online + scheduled + localFixed)}</p>
     <dl class="payment-rows"><div><dt>결제 완료 <small>왕복버스</small></dt><dd>${yen(paid)}</dd></div>
     <div><dt>현지 결제 확정 <small>석식 2회·입탕세·숙박세</small></dt><dd>${yen(localFixed)}</dd></div>
     <div><dt>카드 청구 미확인 <small>료칸 객실</small></dt><dd>${yen(online)}</dd></div>
-    <div><dt>12/1 자동 결제 예정 <small>포르자 객실</small></dt><dd>${usd(scheduled)}</dd></div></dl></section>
-    <section class="budget-local"><h2>날짜별 현지 예산</h2><ul class="budget-date-list">${dailyRows}</ul><dl class="payment-rows"><div><dt>3일 합계</dt><dd>${range(localMin, localMax)}</dd></div></dl><p class="budget-note">이 합계에는 현지에서 낼 예약 금액 ${yen(localFixed)}이 들어 있어요.</p></section></div>
-    <details class="trip-account budget-basis"><summary><strong>선택 지출과 환산 기준</strong></summary><div class="account-body"><dl class="payment-rows"><div><dt>선택 포함 현지 상한</dt><dd>${yen(localLimit)}</dd></div><div><dt>선택 포함 전체 상한</dt><dd>${yen(onlineYen + localLimit)} + ${usd(scheduled)}</dd></div></dl>
-    <p>11/23 예약 메일·일정 기준. 한국 내 이동과 개인 쇼핑은 별도예요. 택시·식비는 두 사람의 계획액이에요.</p><p>료칸 객실은 사전 온라인 카드로 지정됐고 실제 청구는 확인 중이에요. 포르자는 12/1 환율과 조정 조건에 따라 원화 청구액이 달라져요.</p><p class="budget-note">원화는 11/23 KB국민은행 31회차 매매기준율(100엔 846.12원, 1달러 1,343.80원)로 반올림했어요. <a class="budget-link" href="https://www.kita.net/cmmrcInfo/ehgtGnrlzInfo/rltmEhgt.do" target="_blank" rel="noopener noreferrer">한국무역협회 환율</a></p></div></details>`;
+    <div><dt>12/1 자동 결제 예정 <small>포르자 객실 · 엔화 환산</small></dt><dd>약 ${yen(scheduled)}</dd></div></dl></section>
+    <details class="trip-account budget-basis"><summary><strong>선택 지출과 환산 기준</strong></summary><div class="account-body"><dl class="payment-rows"><div><dt>현지 기본 예산</dt><dd>${range(localMin, localMax)}</dd></div><div><dt>선택 포함 현지 상한</dt><dd>${yen(localMax + optionalMax)}</dd></div><div><dt>선택 포함 3일 총예산 상한</dt><dd>${yen(totalMax + optionalMax)}</dd></div></dl>
+    <p>11/23 예약 메일·일정 기준. 왕복버스는 토요일에 한 번, 객실료는 숙박일에 집계했어요. 한국 내 이동과 개인 쇼핑은 별도예요.</p>
+    <p class="budget-note">포르자 객실료는 11/23 KB국민은행 매매기준율(1달러 ≈ ${(wonPerDollar / wonPerYen).toFixed(2)}엔)로 환산했어요. 실제 결제액은 12/1 아고다 적용 환율과 조정 조건에 따라 달라져요. 같은 날 환율로 3일 기본 예산은 약 ${approxManWon(totalMin)}만~${approxManWon(totalMax)}만 원이에요. <a class="budget-link" href="https://www.kita.net/cmmrcInfo/ehgtGnrlzInfo/rltmEhgt.do" target="_blank" rel="noopener noreferrer">한국무역협회 환율</a></p></div></details>
+    ${categorySection()}`;
 }
 export function renderBudget(day, overview = false) {
   const tabs = dates.map((date, i) => `<button type="button" class="budget-day" data-action="budget-day" data-id="${i}" aria-pressed="${!overview && day === i}"><b>${date}</b><span>${places[i]}</span></button>`).join('');

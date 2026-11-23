@@ -90,7 +90,7 @@ export const tasks = [
   { id: 'locker', event: 'bags', title: '유후인역 짐 보관과 마감 확인', info: '17:00 이전 회수 가능 여부' },
   { id: 'cafe-alt', event: 'shiba', title: '마메시바 카페 입장 시각 확인', info: '15:50쯤까지 입장 가능한 경우에만 방문' },
   { id: 'pickup', event: 'collect', title: '픽업 요청용 일본 동전 준비', info: '짐 회수 후 역 공중전화로 17:00까지 요청 · 안 되면 택시' },
-  { id: 'hotel-payment', event: 'hakata-hotel', title: '12/1 포르자 자동 결제 확인', info: '숙소 예약 확정 · USD 157.34 기준, 결제일 환율·5% 조정 및 현지 숙박세 별도 확인' },
+  { id: 'hotel-payment', event: 'hakata-hotel', title: '12/1 포르자 자동 결제 확인', info: '카드 명세서에서 환율·5% 조정이 적용된 객실 청구액을 확인해요. 현지 숙박세는 두 사람 합계 ¥400이에요.' },
   { id: 'ryokan-card-charge', event: 'ryokan', title: '료칸 객실 카드 청구 내역 확인', info: '예약서의 사전 온라인 카드 결제 금액 ¥34,480과 카드 명세 대조' },
   { id: 'choose-yufuin-snack', event: 'shopping', title: '토요일 유후인 간식 고르기', info: '마메시바 입장과 짐 회수에 여유가 있을 때 먹을 한두 곳' },
   { id: 'choose-udon', event: 'lunch', title: '일요일 점심 우동집 고르기', info: '카로노우론·다이치·가마키리 비교 · 타이라·하가쿠레는 일요일 휴무' },

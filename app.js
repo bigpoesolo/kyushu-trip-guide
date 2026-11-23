@@ -1,7 +1,7 @@
-import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=21';
-import { eventPhotos, guides, photos } from './guides.js?v=21';
-import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=21';
-import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, renderBudget } from './budget.js?v=21';
+import { areas, checkinFirst, days, foodDecisions, foodGenres, foods, savedPlaces, schedules, statuses, tasks } from './trip.js?v=22';
+import { eventPhotos, guides, photos } from './guides.js?v=22';
+import { gmailSearch, hotelBooking, mailChecked, travelMails } from './reservations.js?v=22';
+import { dailyBudgetLabel, eventBudgetDetails, eventBudgetLabel, forzaRoomYen, renderBudget } from './budget.js?v=22';
 
 const view = document.querySelector('#view');
 const dialog = document.querySelector('#detail');
@@ -10,7 +10,7 @@ const notice = document.querySelector('#notice');
 const offlineState = document.querySelector('#offline-state');
 const shell = document.querySelector('.shell');
 const storageKey = 'fukuoka-trip-edits-v1';
-const appVersion = 'v21';
+const appVersion = 'v22';
 const events = Object.fromEntries(schedules.flatMap((list, day) => list.map(event => [event.id, { ...event, day }])));
 const mealEvents = Object.values(events).filter(event => event.meal);
 let saved = { events: {}, tasks: {} };
@@ -107,7 +107,7 @@ function restoreRoute() {
   try { parts = window.location.hash.slice(1).split('/').map(decodeURIComponent); } catch { parts = []; }
   const [nextTab, nextDay] = parts;
   tab = ['schedule', 'maps', 'food', 'budget', 'mail', 'tasks'].includes(nextTab) ? nextTab : 'schedule';
-  budgetOverview = tab === 'budget' && parts[2] === 'overview';
+  budgetOverview = tab === 'budget' && (!nextDay || parts[2] === 'overview');
   const [kind, id, from] = parts.slice(budgetOverview ? 3 : 2);
   const today = journeyClock().index;
   day = ['1', '2', '3'].includes(nextDay) ? Number(nextDay) - 1 : today < 0 ? 0 : today;
@@ -332,9 +332,10 @@ function renderMails() {
 }
 
 function bookingDetails() {
+  const roomPayment = `약 ¥${forzaRoomYen.toLocaleString('en-US')} · 12/1 자동 결제 예정`;
   return `<section class="detail-section booking-summary"><h3>${icon('hotel')}확정된 숙박 예약</h3>
     <p class="booking-name">${escape(hotelBooking.english)}</p>
-    <dl class="booking-facts">${[['숙박', hotelBooking.stay], ['객실', hotelBooking.room], ['체크인', hotelBooking.checkin], ['체크아웃', hotelBooking.checkout], ['결제', hotelBooking.payment], ['현지 납부', hotelBooking.cityTax], ['취소', hotelBooking.cancellation], ['조식', hotelBooking.breakfast]].map(([label, value]) => `<div><dt>${label}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>
+    <dl class="booking-facts">${[['숙박', hotelBooking.stay], ['객실', hotelBooking.room], ['체크인', hotelBooking.checkin], ['체크아웃', hotelBooking.checkout], ['결제 예상', roomPayment], ['현지 납부', hotelBooking.cityTax], ['취소', hotelBooking.cancellation], ['조식', hotelBooking.breakfast]].map(([label, value]) => `<div><dt>${label}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>
     <p class="meta">${escape(hotelBooking.paymentNote)}</p><p class="meta">${escape(hotelBooking.verified)}</p></section>`;
 }
 
@@ -559,7 +560,7 @@ document.addEventListener('click', event => {
   if (!button) return;
   const { action: name, id, tab: nextTab } = button.dataset;
   if (nextTab) {
-    if (nextTab !== tab) budgetOverview = false;
+    budgetOverview = nextTab === 'budget';
     tab = nextTab;
     routeDetail = undefined;
     syncRoute();

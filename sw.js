@@ -1,7 +1,7 @@
 // Bump this version when shipping changes to the files in the offline cache.
-const cacheName = 'fukuoka-trip-v21';
+const cacheName = 'fukuoka-trip-v22';
 const shell = [
-  './', './style.css?v=21', './itinerary.css?v=21', './browse.css?v=21', './app.js?v=21', './trip.js?v=21', './guides.js?v=21', './reservations.js?v=21', './budget.js?v=21',
+  './', './style.css?v=22', './itinerary.css?v=22', './browse.css?v=22', './app.js?v=22', './trip.js?v=22', './guides.js?v=22', './reservations.js?v=22', './budget.js?v=22',
   './manifest.webmanifest', './icon-192.png', './icon-512.png', './yufuin-winter.webp',
   './photo-yufuin-station.webp', './photo-yunotsubo.webp', './photo-airport.webp', './photo-hakata.webp', './photo-kushida.webp',
   './photo-mameshiba.webp', './photo-street-snacks.webp', './photo-night-snacks.webp',
